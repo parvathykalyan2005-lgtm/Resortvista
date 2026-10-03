@@ -1,0 +1,222 @@
+{% load static %}
+{% include 'admin/header.html' %}
+<style>
+  /* Premium Card Styling */
+  .card {
+    border: none;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  }
+
+  .card-body {
+    padding: 1.5rem !important;
+  }
+
+  /* Elegant Typography */
+  .card-title {
+    font-size: 1.35rem !important;
+    font-weight: 700 !important;
+    color: #1a2332 !important;
+    letter-spacing: 0.3px;
+    position: relative;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.25rem !important;
+  }
+
+  .card-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(90deg, #1e5a96 0%, #2874a6 100%);
+    border-radius: 2px;
+  }
+
+  /* Table Styling */
+  .table {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+  }
+
+  .table thead {
+    background: linear-gradient(135deg, #f0f4f8 0%, #e8eef7 100%);
+    border-top: 1px solid #e0e8f0;
+  }
+
+  .table thead th {
+    border-bottom: 1px solid #d0dce8;
+    padding: 0.85rem 0.6rem !important;
+    background: none;
+  }
+
+  .table thead th h6 {
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    color: #1e5a96 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+  }
+
+  .table tbody tr {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-bottom: 1px solid #f0f4f8;
+  }
+
+  .table tbody tr:hover {
+    background-color: #f8fafb;
+    box-shadow: 0 1px 4px rgba(30, 90, 150, 0.08);
+  }
+
+  .table tbody td {
+    padding: 0.9rem 0.6rem !important;
+    vertical-align: middle;
+    color: #3a4a5c;
+  }
+
+  .table tbody td h6 {
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    color: #1a2332 !important;
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  /* Action Buttons - Compact Premium Style */
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.9rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-decoration: none;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    box-sizing: border-box;
+  }
+
+  .action-btn svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+    transition: transform 0.25s ease;
+  }
+
+  /* Edit Button - Premium Blue */
+  .action-btn.btn-edit {
+    background: linear-gradient(135deg, #1e5a96 0%, #2874a6 100%);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(30, 90, 150, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .action-btn.btn-edit:hover {
+    background: linear-gradient(135deg, #1a4d7a 0%, #1e5a96 100%);
+    box-shadow: 0 4px 12px rgba(30, 90, 150, 0.25);
+    transform: translateY(-2px);
+  }
+
+  .action-btn.btn-edit:hover svg {
+    transform: scale(1.1);
+  }
+
+  .action-btn.btn-edit:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(30, 90, 150, 0.15);
+  }
+
+  /* Delete Button - Premium Red */
+  .action-btn.btn-delete {
+    background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(192, 57, 43, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .action-btn.btn-delete:hover {
+    background: linear-gradient(135deg, #a93226 0%, #c0392b 100%);
+    box-shadow: 0 4px 12px rgba(192, 57, 43, 0.25);
+    transform: translateY(-2px);
+  }
+
+  .action-btn.btn-delete:hover svg {
+    transform: scale(1.1);
+  }
+
+  .action-btn.btn-delete:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(192, 57, 43, 0.15);
+  }
+
+  /* Action Cell */
+  .action-cell {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    justify-content: flex-start;
+  }
+</style>
+<div class="col-lg-8 d-flex align-items-stretch">
+            <div class="card w-100">
+              <div class="card-body p-4">
+                <br><br>
+                <h5 class="card-title fw-semibold mb-4">View District</h5>
+                <div class="table-responsive">
+                  <table class="table text-nowrap mb-0 align-middle">
+                    <thead class="text-dark fs-4">
+                      <tr>
+                        <th class="border-bottom-0">
+                          <h6 class="fw-semibold mb-0">Id</h6>
+                        </th>
+                        <th class="border-bottom-0">
+                          <h6 class="fw-semibold mb-0">District name</h6>
+                        </th>
+                        <th class="border-bottom-0">
+                          <h6 class="fw-semibold mb-0">Actions</h6>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in district %} 
+                      <tr>
+                        <td class="border-bottom-0">
+    <h6 class="fw-semibold mb-0">{{ forloop.counter }}</h6>
+</td>
+
+                        <td class="border-bottom-0">
+                            <h6 class="fw-semibold mb-1">{{ d.district_name }}</h6>                        
+                        </td>
+                        <td class="border-bottom-0">
+                          <div class="action-cell">
+                            <a href="{% url 'editdistrict' id=d.district_id %}" class="action-btn btn-edit" title="Edit district">
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/><path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                              Edit
+                            </a>
+                            <a href="{% url 'deletedistrict' id=d.district_id %}" class="action-btn btn-delete" onclick="return confirm('Are you sure you want to delete this district?');" title="Delete district">
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-9l-1 1H5v2h14V4z"/></svg>
+                              Delete
+                            </a>
+                          </div>
+                        </td>
+                      </tr> 
+                      {% endfor %}                      
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+{% include 'admin/footer.html' %}

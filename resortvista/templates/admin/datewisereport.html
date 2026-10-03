@@ -1,0 +1,63 @@
+{% load static %}
+{% include 'admin/header.html' %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-body">
+					<h5 class="card-title fw-semibold mb-3">Datewise Booking Report</h5>
+					<form method="get" action="{% url 'datewisereport' %}" class="row g-3 align-items-end mb-4">
+						<div class="col-md-4">
+							<label for="from_date" class="form-label">From Date</label>
+							<input type="date" id="from_date" name="from_date" class="form-control" value="{{ from_date }}">
+						</div>
+						<div class="col-md-4">
+							<label for="to_date" class="form-label">To Date</label>
+							<input type="date" id="to_date" name="to_date" class="form-control" value="{{ to_date }}">
+						</div>
+						<div class="col-md-4 d-flex gap-2">
+							<button type="submit" class="btn btn-primary">View Report</button>
+							<a href="{% url 'datewisereport_excel' %}?from_date={{ from_date }}&to_date={{ to_date }}" class="btn btn-success">Download Excel</a>
+						</div>
+					</form>
+
+					<div class="table-responsive">
+						<table class="table text-nowrap mb-0 align-middle">
+							<thead class="text-dark fs-4">
+								<tr>
+									<th class="border-bottom-0"><h6 class="fw-semibold mb-0">Booking ID</h6></th>
+									<th class="border-bottom-0"><h6 class="fw-semibold mb-0">Customer</h6></th>
+									<th class="border-bottom-0"><h6 class="fw-semibold mb-0">Resort</h6></th>
+									<th class="border-bottom-0"><h6 class="fw-semibold mb-0">Check In</h6></th>
+									<th class="border-bottom-0"><h6 class="fw-semibold mb-0">Check Out</h6></th>
+									<th class="border-bottom-0"><h6 class="fw-semibold mb-0">Amount</h6></th>
+									<th class="border-bottom-0"><h6 class="fw-semibold mb-0">Status</h6></th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for booking in bookings %}
+								<tr>
+									<td class="border-bottom-0"><p class="mb-0 fw-normal">{{ booking.booking_id }}</p></td>
+									<td class="border-bottom-0"><p class="mb-0 fw-normal">{{ booking.customer_id.customer_name }}</p></td>
+									<td class="border-bottom-0"><p class="mb-0 fw-normal">{{ booking.resort_id.resort_name }}</p></td>
+									<td class="border-bottom-0"><p class="mb-0 fw-normal">{{ booking.check_in_date }}</p></td>
+									<td class="border-bottom-0"><p class="mb-0 fw-normal">{{ booking.check_out_date }}</p></td>
+									<td class="border-bottom-0"><p class="mb-0 fw-normal">{{ booking.total_amount }}</p></td>
+									<td class="border-bottom-0"><p class="mb-0 fw-normal">{{ booking.booking_status }}</p></td>
+								</tr>
+								{% empty %}
+								<tr>
+									<td colspan="7" class="text-center text-muted py-4">No bookings found for selected date range.</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% include 'admin/footer.html' %}

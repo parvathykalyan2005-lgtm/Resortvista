@@ -1,0 +1,335 @@
+{% load static %}
+{% include 'customer/header.html' %}
+
+<style>
+	.rv-contact-hero {
+		position: relative;
+		overflow: hidden;
+	}
+
+	.rv-contact-hero::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(90deg, rgba(17, 24, 39, 0.76) 0%, rgba(17, 24, 39, 0.48) 48%, rgba(17, 24, 39, 0.34) 100%);
+		z-index: 0;
+	}
+
+	.rv-contact-hero .container,
+	.rv-contact-hero .breadcrumb-text {
+		position: relative;
+		z-index: 1;
+	}
+
+	.rv-contact-hero .breadcrumb-text h2,
+	.rv-contact-hero .breadcrumb-text .bt-option a,
+	.rv-contact-hero .breadcrumb-text .bt-option span {
+		color: #fff;
+	}
+
+	.rv-contact-page .rv-card {
+		background: #ffffff;
+		border-radius: 10px;
+		box-shadow: 0 8px 26px rgba(10, 18, 40, 0.08);
+		border: 1px solid rgba(0, 0, 0, 0.06);
+		padding: 34px 28px;
+		height: 100%;
+	}
+
+	.rv-contact-page .rv-card h4 {
+		margin-bottom: 10px;
+		font-weight: 700;
+	}
+
+	.rv-contact-page .rv-card p {
+		color: #6f7480;
+		margin-bottom: 22px;
+	}
+
+	.rv-contact-page .rv-info-item {
+		display: flex;
+		align-items: flex-start;
+		gap: 14px;
+		margin-bottom: 18px;
+	}
+
+	.rv-contact-page .rv-info-item i {
+		width: 38px;
+		height: 38px;
+		border-radius: 50%;
+		background: rgba(201, 139, 74, 0.12);
+		color: #c98b4a;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 16px;
+		margin-top: 2px;
+	}
+
+	.rv-contact-page .rv-info-item h6 {
+		margin-bottom: 4px;
+		font-weight: 700;
+		color: #19191a;
+	}
+
+	.rv-contact-page .rv-info-item span {
+		color: #6f7480;
+		line-height: 1.6;
+	}
+
+	.rv-contact-page .rv-side-image {
+		border-radius: 10px;
+		width: 100%;
+		height: 200px;
+		object-fit: cover;
+		margin-top: 8px;
+	}
+
+	.rv-contact-page .rv-form-group {
+		margin-bottom: 16px;
+	}
+
+	.rv-contact-page .rv-form-group input,
+	.rv-contact-page .rv-form-group textarea {
+		width: 100%;
+		border: 1px solid #e1e3e7;
+		border-radius: 6px;
+		padding: 11px 14px;
+		color: #19191a;
+		transition: all 0.2s ease;
+	}
+
+	.rv-contact-page .rv-form-group input:focus,
+	.rv-contact-page .rv-form-group textarea:focus {
+		border-color: #c98b4a;
+		box-shadow: 0 0 0 0.12rem rgba(201, 139, 74, 0.25);
+		outline: none;
+	}
+
+	.rv-contact-page .rv-form-group textarea {
+		min-height: 140px;
+		resize: vertical;
+	}
+
+	.rv-contact-page .rv-btn {
+		background: #dfa974;
+		border: none;
+		color: #fff;
+		font-weight: 700;
+		letter-spacing: 0.03em;
+		padding: 12px 26px;
+		border-radius: 6px;
+		transition: all 0.25s ease;
+	}
+
+	.rv-contact-page .rv-btn:hover {
+		background: #c98b4a;
+	}
+
+	.rv-contact-page .rv-gallery-title {
+		margin-bottom: 22px;
+		text-align: center;
+	}
+
+	.rv-contact-page .rv-gallery-title span {
+		display: block;
+		color: #dfa974;
+		text-transform: uppercase;
+		letter-spacing: 0.12em;
+		font-size: 12px;
+		font-weight: 700;
+		margin-bottom: 6px;
+	}
+
+	.rv-contact-page .rv-gallery-title h3 {
+		margin-bottom: 0;
+		font-weight: 700;
+	}
+
+	.rv-contact-page .rv-gallery-card {
+		border-radius: 10px;
+		overflow: hidden;
+		position: relative;
+	}
+
+	.rv-contact-page .rv-gallery-card img {
+		width: 100%;
+		height: 260px;
+		object-fit: cover;
+		transition: transform .35s ease;
+	}
+
+	.rv-contact-page .rv-gallery-card:hover img {
+		transform: scale(1.05);
+	}
+
+	.rv-contact-page .rv-gallery-card .rv-caption {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		padding: 12px 14px;
+		color: #fff;
+		font-size: 14px;
+		font-weight: 600;
+		background: linear-gradient(0deg, rgba(16, 24, 40, 0.72) 0%, rgba(16, 24, 40, 0.0) 100%);
+	}
+
+	.rv-contact-page .rv-map {
+		margin-top: 28px;
+		border-radius: 10px;
+		overflow: hidden;
+		box-shadow: 0 8px 26px rgba(10, 18, 40, 0.08);
+	}
+
+	.rv-contact-page .rv-map iframe {
+		width: 100%;
+		height: 320px;
+		border: 0;
+	}
+</style>
+
+<div class="breadcrumb-section set-bg rv-contact-hero" data-setbg="{% static 'guest/img/hero/hero-2.jpg' %}">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="breadcrumb-text">
+					<h2>Contact ResortVista</h2>
+					<div class="bt-option">
+						<a href="{% url 'customerindex' %}">Home</a>
+						<span>Contact</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<section class="spad rv-contact-page">
+	<div class="container">
+		{% if messages %}
+		<div class="row mb-3">
+			<div class="col-12">
+				{% for message in messages %}
+				<div class="alert {% if 'error' in message.tags %}alert-danger{% elif 'success' in message.tags %}alert-success{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+					{{ message }}
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+		{% endif %}
+
+		<div class="row">
+			<div class="col-lg-5 mb-4">
+				<div class="rv-card">
+					<h4>We Are Here to Help</h4>
+					<p>Have questions about bookings, offers, or resort experiences? Reach out and our support team will respond quickly.</p>
+
+					<div class="rv-info-item">
+						<i class="fa fa-map-marker"></i>
+						<div>
+							<h6>Office Address</h6>
+							<span>ResortVista Head Office, Marine Drive, Kochi, Kerala</span>
+						</div>
+					</div>
+
+					<div class="rv-info-item">
+						<i class="fa fa-phone"></i>
+						<div>
+							<h6>Call Us</h6>
+							<span>+91 98765 43210<br>+91 98765 43211</span>
+						</div>
+					</div>
+
+					<div class="rv-info-item">
+						<i class="fa fa-envelope"></i>
+						<div>
+							<h6>Email Support</h6>
+							<span>support@resortvista.com</span>
+						</div>
+					</div>
+
+					<div class="rv-info-item mb-0">
+						<i class="fa fa-clock-o"></i>
+						<div>
+							<h6>Support Hours</h6>
+							<span>Monday - Saturday: 9:00 AM to 8:00 PM</span>
+						</div>
+					</div>
+
+					<img src="{% static 'guest/img/about/about-1.jpg' %}" alt="ResortVista front desk" class="rv-side-image">
+				</div>
+			</div>
+
+			<div class="col-lg-7 mb-4">
+				<div class="rv-card">
+					<h4>Send Us a Message</h4>
+					<p>Complete the form and our team will contact you shortly with personalized assistance.</p>
+
+					<form method="post" action="{% url 'contactc' %}">
+						{% csrf_token %}
+						<div class="row">
+							<div class="col-md-6 rv-form-group">
+								<input type="text" name="name" placeholder="Your Name" required>
+							</div>
+							<div class="col-md-6 rv-form-group">
+								<input type="email" name="email" placeholder="Your Email" required>
+							</div>
+							<div class="col-md-6 rv-form-group">
+								<input type="text" name="phone" placeholder="Phone Number" required>
+							</div>
+							<div class="col-md-6 rv-form-group">
+								<input type="text" name="subject" placeholder="Subject" required>
+							</div>
+							<div class="col-12 rv-form-group">
+								<textarea name="message" placeholder="Write your message here" required></textarea>
+							</div>
+							<div class="col-12">
+								<button type="submit" class="rv-btn">Send Message</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<div class="rv-gallery-title mt-2">
+			<span>ResortVista</span>
+			<h3>Explore Our Resort Ambience</h3>
+		</div>
+
+		<div class="row">
+			<div class="col-md-4 mb-4">
+				<div class="rv-gallery-card">
+					<img src="{% static 'guest/img/gallery/gallery-1.jpg' %}" alt="Luxury stay">
+					<div class="rv-caption">Luxury Stays</div>
+				</div>
+			</div>
+			<div class="col-md-4 mb-4">
+				<div class="rv-gallery-card">
+					<img src="{% static 'guest/img/gallery/gallery-2.jpg' %}" alt="Serene surroundings">
+					<div class="rv-caption">Serene Surroundings</div>
+				</div>
+			</div>
+			<div class="col-md-4 mb-4">
+				<div class="rv-gallery-card">
+					<img src="{% static 'guest/img/gallery/gallery-4.jpg' %}" alt="Premium experience">
+					<div class="rv-caption">Premium Experience</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="rv-map">
+			<iframe
+				src="https://www.google.com/maps?q=Kochi,Kerala&output=embed"
+				allowfullscreen=""
+				loading="lazy"
+				referrerpolicy="no-referrer-when-downgrade"></iframe>
+		</div>
+	</div>
+</section>
+
+{% include 'customer/footer.html' %}

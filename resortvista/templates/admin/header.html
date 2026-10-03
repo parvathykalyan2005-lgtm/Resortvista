@@ -1,0 +1,273 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Modernize Free</title>
+  <link rel="shortcut icon" type="image/png" href="{% static 'admin/assets/images/logos/favicon.png' %}" />
+  <link rel="stylesheet" href="{% static 'admin/assets/css/styles.min.css' %}" />
+  <style>
+    .left-sidebar {
+      border-right: 1px solid #e8eef5;
+      box-shadow: 8px 0 20px rgba(42, 53, 71, 0.06);
+    }
+
+    .left-sidebar .brand-logo {
+      border-bottom: 1px solid #edf2f7;
+    }
+
+    .left-sidebar .scroll-sidebar {
+      padding: 14px 18px 22px;
+    }
+
+    .sidebar-nav #sidebarnav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sidebar-nav .nav-small-cap {
+      margin-top: 16px;
+      margin-bottom: 4px;
+      padding: 2px 10px;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: #7c8fac;
+    }
+
+    .sidebar-nav .nav-small-cap:first-child {
+      margin-top: 0;
+    }
+
+    .sidebar-nav ul .sidebar-item .sidebar-link {
+      margin: 0;
+      padding: 11px 12px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+
+    .sidebar-nav ul .sidebar-item .sidebar-link span:first-child {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #f3f7ff;
+      transition: all 0.2s ease;
+    }
+
+    .sidebar-nav ul .sidebar-item .sidebar-link .ti {
+      font-size: 18px;
+      color: #5a6a85;
+      transition: all 0.2s ease;
+    }
+
+    .sidebar-nav ul .sidebar-item .sidebar-link:hover {
+      background: #edf3ff;
+      border-color: #d9e5ff;
+      color: #3f69dc;
+      transform: translateX(2px);
+    }
+
+    .sidebar-nav ul .sidebar-item .sidebar-link:hover span:first-child {
+      background: #dfe9ff;
+    }
+
+    .sidebar-nav ul .sidebar-item .sidebar-link:hover .ti {
+      color: #3f69dc;
+    }
+
+    .sidebar-nav ul .sidebar-item.selected>.sidebar-link,
+    .sidebar-nav ul .sidebar-item>.sidebar-link.active,
+    .sidebar-nav ul .sidebar-item.selected>.sidebar-link.active {
+      background: linear-gradient(135deg, #5d87ff 0%, #4f73d9 100%);
+      border-color: transparent;
+      box-shadow: 0 8px 18px rgba(93, 135, 255, 0.3);
+      color: #fff;
+    }
+
+    .sidebar-nav ul .sidebar-item.selected>.sidebar-link span:first-child,
+    .sidebar-nav ul .sidebar-item>.sidebar-link.active span:first-child,
+    .sidebar-nav ul .sidebar-item.selected>.sidebar-link.active span:first-child {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .sidebar-nav ul .sidebar-item.selected>.sidebar-link .ti,
+    .sidebar-nav ul .sidebar-item>.sidebar-link.active .ti,
+    .sidebar-nav ul .sidebar-item.selected>.sidebar-link.active .ti {
+      color: #fff;
+    }
+
+    .app-header {
+      border-bottom: 1px solid #edf2f7;
+      box-shadow: 0 2px 12px rgba(42, 53, 71, 0.04);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+    <aside class="left-sidebar">
+      <div>
+        <div class="brand-logo d-flex align-items-center justify-content-between">
+          <a href="{% url 'message' %}" class="text-nowrap logo-img">
+            <img src="{% static 'admin/assets/images/logos/resortlogo-removebg-preview.png' %}" width="110" alt="" />
+          </a>
+          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+            <i class="ti ti-x fs-8"></i>
+          </div>
+        </div>
+        <!-- Sidebar navigation-->
+        <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
+          <ul id="sidebarnav">
+            <li class="nav-small-cap">
+              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+              <span class="hide-menu">Home</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="{% url 'message' %}" aria-expanded="false">
+                <span>
+                  <i class="ti ti-layout-dashboard"></i>
+                </span>
+                <span class="hide-menu">Dashboard</span>
+              </a>
+            </li>
+            <li class="nav-small-cap">
+              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+              <span class="hide-menu">Management</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="{% url 'districtreg' %}" aria-expanded="false">
+                <span>
+                  <i class="ti ti-article"></i>
+                </span>
+                <span class="hide-menu">District Add</span>
+              </a>
+            </li>
+            <!-- <li class="sidebar-item">
+              <a class="sidebar-link" href="{% url 'viewdistrict' %}" aria-expanded="false">
+                <span>
+                  <i class="ti ti-alert-circle"></i>
+                </span>
+                <span class="hide-menu">View District</span>
+              </a>
+            </li> -->
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="{% url 'locationreg' %}" aria-expanded="false">
+                <span>
+                  <i class="ti ti-cards"></i>
+                </span>
+                <span class="hide-menu">Location Add</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="{% url 'locationview' %}" aria-expanded="false">
+                <span>
+                  <i class="ti ti-file-description"></i>
+                </span>
+                <span class="hide-menu">View Location</span>
+              </a>
+            </li>
+             <li class="sidebar-item">
+              <a class="sidebar-link" href="{% url 'categoryreg' %}" aria-expanded="false">
+                <span>
+                  <i class="ti ti-cards"></i>
+                </span>
+                <span class="hide-menu">Category Add</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="{% url 'viewcategory' %}" aria-expanded="false">
+                <span>
+                  <i class="ti ti-file-description"></i>
+                </span>
+                <span class="hide-menu">View Category</span>
+              </a>
+            </li>
+            <li class="nav-small-cap">
+              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+              <span class="hide-menu">AUTH</span>
+            </li>
+             <li class="sidebar-item">
+              <a class="sidebar-link" href="{% url 'ownerverify' %}" aria-expanded="false">
+                <span>
+                  <i class="ti ti-user-plus"></i>
+                </span>
+                <span class="hide-menu">Owner Verify</span>
+              </a>
+            </li>
+            <li class="nav-small-cap">
+              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+              <span class="hide-menu">REPORTS</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="{% url 'barchart' %}" aria-expanded="false">
+                <span>
+                  <i class="ti ti-article"></i>
+                </span>
+                <span class="hide-menu">Bar Chart Report</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="{% url 'piechart' %}" aria-expanded="false">
+                <span>
+                  <i class="ti ti-cards"></i>
+                </span>
+                <span class="hide-menu">Pie Chart Report</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="{% url 'datewisereport' %}" aria-expanded="false">
+                <span>
+                  <i class="ti ti-file-description"></i>
+                </span>
+                <span class="hide-menu">Date-wise Report</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <!-- End Sidebar navigation -->
+      </div>
+      <!-- End Sidebar scroll-->
+    </aside>
+    <!--  Sidebar End -->
+    <!--  Main wrapper -->
+    <div class="body-wrapper">
+      <!--  Header Start -->
+      <header class="app-header">
+        <nav class="navbar navbar-expand-lg navbar-light">
+          <ul class="navbar-nav">
+            <li class="nav-item d-block d-xl-none">
+              <a class="nav-link sidebartoggler nav-icon-hover" id="headerCollapse" href="javascript:void(0)">
+                <i class="ti ti-menu-2"></i>
+              </a>
+            </li>
+          </ul>
+          <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
+            <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
+              <li class="nav-item dropdown">
+                <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  <img src="{% static 'admin/assets/images/profile/user-1.jpg' %}" alt="" width="35" height="35" class="rounded-circle">
+                </a>
+                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
+                  <div class="message-body">
+                    <a href="{% url 'admin_profile' %}" class="d-flex align-items-center gap-2 dropdown-item">
+                      <i class="ti ti-user fs-6"></i>
+                      <p class="mb-0 fs-3">My Profile</p>
+                    </a>
+                    <a href="{% url 'logout' %}" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </header>
+      <!--  Header End -->

@@ -1,0 +1,212 @@
+{% load static %}
+{% include 'customer/header.html' %}
+
+<style>
+	.container-custom { max-width: 1080px; margin: 0 auto; }
+	.page-title { margin: 24px 0 8px; }
+	.muted { color:#64748b; }
+	.card { border:1px solid #e5eaf2; border-radius:12px; box-shadow:0 8px 24px rgba(16,24,40,.06); background:#fff; }
+	.card-header { padding:14px 16px; background:#f8fafc; border-bottom:1px solid #e5eaf2; font-weight:700; color:#0f172a; }
+	.card-body { padding:16px; }
+	.pkg-list { display:grid; gap:12px; }
+	.pkg-item { border:1px solid #e2e8f0; border-radius:10px; padding:12px; }
+	.include-row { display:flex; gap:8px; align-items:center; }
+	.summary-bar { margin-top:16px; padding:14px 16px; border:1px solid #e2e8f0; border-radius:10px; background:#f1f5f9; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+	.primary-btn { display:inline-block; padding:10px 18px; background:#1e5a96; color:#fff; border:none; border-radius:6px; text-decoration:none; cursor:pointer; }
+	.primary-btn.alt { background:#eef3f9; color:#1e5a96; border:1px solid #d0dce8; }
+	.mt-2 { margin-top: 8px; }
+	.mt-3 { margin-top: 12px; }
+	.mt-4 { margin-top: 16px; }
+	.grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+	@media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+</style>
+
+<section class="spad">
+	<div class="container container-custom">
+		<h2 class="page-title">Booking</h2>
+		{% if resort %}
+			<div class="muted">Resort: <strong>{{ resort.resort_name }}</strong></div>
+			<div class="mt-1 muted">Price: <strong>Rs.{{ resort.amount }}</strong> <span class="muted">/ Pernight</span></div>
+		{% endif %}
+		<div class="mt-2 muted">
+			{% if date_in %}Check In: <strong>{{ date_in }}</strong>{% endif %}
+			{% if date_out %} • Check Out: <strong>{{ date_out }}</strong>{% endif %}
+		</div>
+
+		<div class="grid-2 mt-4">
+			{% if multi_summary or package %}
+				<div class="card">
+					<div class="card-header">Selected Packages</div>
+					<div class="card-body">
+						{% if multi_summary %}
+							<div class="pkg-list">
+								{% for item in multi_summary %}
+									<div class="pkg-item">
+										<p></p>
+										<div style="font-weight:600; color:#0f172a;">Package {{ forloop.counter }}: {{ item.package.package_name }}
+										</div>
+										<div class="muted"></strong></div>
+										{% if item.details and item.details|length > 0 %}
+											<div class="mt-2 muted">Includes:</div>
+											<div class="mt-1">
+												{% for d in item.details %}
+													<div class="include-row">
+														<span>{{ d.package_detail_name }}</span>
+														{% if d.amount %}<span class="muted">• Rs.{{ d.amount }}</span>{% endif %}
+													</div>
+													
+												{% endfor %}
+											</div>
+										{% endif %}
+									</div>
+									<div class="mt-2"><span style="font-weight:600; color:#0f172a;">Includes Total:</span> <span class="muted">Rs.{{ item.includes_total }}</span></div>
+									
+								{% endfor %}
+							</div>
+						{% elif package %}
+							<div class="pkg-item">
+								<div style="font-weight:600; color:#0f172a;">{{ package.package_name }}</div>
+								{% if selected_includes %}
+									<div class="mt-2 muted">Requested includes:</div>
+									<ul class="mt-1">
+										{% for name in selected_includes %}
+											<li>{{ name }}</li>
+										{% endfor %}
+									</ul>
+								{% endif %}
+								{% if description %}
+									<div class="mt-2 muted">Notes:</div>
+									<div>{{ description }}</div>
+								{% endif %}
+							</div>
+						{% endif %}
+					</div>
+				</div>
+			{% endif %}
+
+			<div class="card">
+				<div class="card-header">Contact & Confirmation</div>
+				<div class="card-body">
+					<form method="post" action="#">
+						{% csrf_token %}
+						<div class="mt-2">
+							<div style="font-weight:600; color:#0f172a;">Stay Dates</div>
+							<div class="grid-2 mt-2">
+								<div>
+									<label class="muted" for="bk-date-in">Check In</label>
+									<input id="bk-date-in" type="date" name="date_in" value="{{ date_in|default:'' }}" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:6px;">
+								</div>
+								<div>
+									<label class="muted" for="bk-date-out">Check Out</label>
+									<input id="bk-date-out" type="date" name="date_out" value="{{ date_out|default:'' }}" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:6px;">
+								</div>
+							</div>
+							<div id="availability-msg" style="margin-top:12px;"></div>
+						</div>
+						<div class="mt-2">
+							<label class="muted" for="cust-name">Full Name</label>
+							<input id="cust-name" type="text" name="full_name" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:6px;" required>
+						</div>
+						<div class="mt-2">
+							<label class="muted" for="cust-email">Email</label>
+							<input id="cust-email" type="email" name="email" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:6px;" required>
+						</div>
+						<div class="mt-2">
+							<label class="muted" for="cust-phone">Phone</label>
+							<input id="cust-phone" type="text" name="phone" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:6px;">
+						</div>
+						<input type="hidden" value="{{ item.includes_total }}" name="amount">
+						<div class="mt-3" style="display:flex; gap:10px;">
+							<a class="primary-btn alt" href="{% url 'resortsingleview' resort.resort_id %}">Back</a>
+							<button type="submit" class="primary-btn">Confirm Booking</button>
+						</div>
+						
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<div class="summary-bar mt-4">
+			<div style="display:flex; gap:16px; align-items:center;">
+				{% if multi_summary %}
+					<span>Total packages: <strong>{{ multi_summary|length }}</strong></span>
+					{% if grand_total_all %}<span>Grand total: <strong>Rs.{{ grand_total_all }}</strong></span>{% endif %}
+				{% endif %}
+			</div>
+			<div>
+				{% if resort and resort.owner_id %}
+					<span class="muted">Resort owner ID: <strong>{{ resort.owner_id.owner_id }}</strong></span>
+				{% endif %}
+				<span class="muted">Dates will be confirmed at checkout.</span>
+			</div>
+		</div>
+	</div>
+</section>
+
+
+{% include 'customer/footer.html' %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	const dateInInput = document.getElementById('bk-date-in');
+	const dateOutInput = document.getElementById('bk-date-out');
+	const availabilityMsg = document.getElementById('availability-msg');
+	const resortId = '{{ resort.resort_id }}';
+	const confirmBtn = document.querySelector('.primary-btn[type="submit"]');
+	
+	function checkAvailability() {
+		const dateIn = dateInInput.value;
+		const dateOut = dateOutInput.value;
+		
+		if (!dateIn || !dateOut) {
+			availabilityMsg.innerHTML = '';
+			if (confirmBtn) confirmBtn.disabled = false;
+			return;
+		}
+		
+		const formData = new FormData();
+		formData.append('date_in', dateIn);
+		formData.append('date_out', dateOut);
+		
+		fetch(`/customer/availability/${resortId}/ajax/`, {
+			method: 'POST',
+			body: formData,
+			headers: {
+				'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+			}
+		})
+		.then(response => response.json())
+		.then(data => {
+			if (data.checked) {
+				if (data.status === 'available') {
+					availabilityMsg.innerHTML = `
+						<div style="padding:12px 16px; border-radius:8px; background:#f0fdf4; border:1px solid #86efac;">
+							<p style="color:#166534; font-weight:600; margin:0;">${data.message}</p>
+						</div>
+					`;
+					if (confirmBtn) confirmBtn.disabled = false;
+				} else {
+					availabilityMsg.innerHTML = `
+						<div style="padding:12px 16px; border-radius:8px; background:#fef2f2; border:1px solid #fca5a5;">
+							<p style="color:#991b1b; font-weight:600; margin:0;">${data.message}</p>
+						</div>
+					`;
+					if (confirmBtn) confirmBtn.disabled = true;
+				}
+			}
+		})
+		.catch(error => {
+			console.error('Error checking availability:', error);
+			availabilityMsg.innerHTML = '';
+		});
+	}
+	
+	dateInInput.addEventListener('change', checkAvailability);
+	dateOutInput.addEventListener('change', checkAvailability);
+	
+	// Check availability on page load if dates are set
+	if (dateInInput.value && dateOutInput.value) {
+		checkAvailability();
+	}
+});
+</script>

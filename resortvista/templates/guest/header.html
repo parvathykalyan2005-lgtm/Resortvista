@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Sona Template">
+    <meta name="keywords" content="Sona, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sona | Template</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css?family=Lora:400,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Cabin:400,500,600,700&display=swap" rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="{% static 'guest/css/bootstrap.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'guest/css/font-awesome.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'guest/css/elegant-icons.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'guest/css/flaticon.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'guest/css/owl.carousel.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'guest/css/nice-select.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'guest/css/jquery-ui.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'guest/css/magnific-popup.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'guest/css/slicknav.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'guest/css/style.css' %}" type="text/css">
+    <style>
+        .rv-brand-logo {
+            display: inline-block;
+            position: relative;
+            font-family: 'Lora', serif;
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: 0.25px;
+            text-decoration: none;
+            line-height: 1;
+            background: linear-gradient(135deg, #1f2937 0%, #111827 45%, #c98b4a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: transform .2s ease, filter .2s ease;
+        }
+
+        .rv-brand-logo::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -6px;
+            width: 70%;
+            height: 2px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #c98b4a 0%, rgba(201, 139, 74, 0) 100%);
+            transition: width .2s ease;
+        }
+
+        .rv-brand-logo:hover {
+            transform: translateY(-1px);
+            filter: saturate(1.08);
+        }
+
+        .rv-brand-logo:hover::after {
+            width: 100%;
+        }
+
+        @media (max-width: 767px) {
+            .rv-brand-logo {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+ 
+    <!-- Offcanvas Menu Section End -->
+
+    <!-- Header Section Begin -->
+    <header class="header-section"> 
+        <div class="menu-item">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-2">
+                        <div class="logo">
+                                                        <a href="{% url 'guestindex' %}" class="rv-brand-logo" aria-label="ResortVista Home">
+                              ResortVista  
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-10">
+                        <div class="nav-menu">
+                            <nav class="mainmenu">
+                                <ul>
+                                    <li class="active"><a href="{% url 'guestindex' %}">Home</a></li>
+                                    <li><a href="{% url 'guest_about' %}">About Us</a></li>
+                                    <li><a href="{% url 'guest_contact' %}">Contact</a></li>
+                                </ul>
+                            </nav>
+                            <div class="nav-auth">
+                                <a href="{% url 'login' %}" class="auth-link login-link">Login</a>
+                                <a href="{% url 'choosereg' %}" class="auth-link register-link">Register</a>
+                            </div>
+                            <div class="nav-right search-switch">
+                                <i class="icon_search"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Header End -->

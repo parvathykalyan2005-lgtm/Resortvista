@@ -1,0 +1,187 @@
+{% load static %}
+{% include 'resortowner/header.html' %}
+<style>
+    .pv-top-row {
+        align-items: center;
+        margin-bottom: 18px;
+    }
+
+    .pv-add-btn {
+        border-radius: 8px;
+        padding: 10px 16px;
+        font-weight: 600;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .pv-card-wrap {
+        margin-bottom: 26px;
+    }
+
+    .pv-card {
+        height: 100%;
+        border: 1px solid #ececec;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .pv-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .pv-card-img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+    }
+
+    .pv-card-body {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .pv-title {
+        margin-bottom: 6px;
+        font-weight: 700;
+    }
+
+    .pv-text {
+        margin-bottom: 4px;
+    }
+
+    .pv-actions {
+        margin-top: auto;
+        padding-top: 8px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .pv-action-btn {
+        display: inline-block;
+        border-radius: 8px;
+        padding: 8px 14px;
+        text-decoration: none;
+        color: #fff !important;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .pv-edit-btn {
+        background: #eb905a;
+    }
+
+    .pv-edit-btn:hover {
+        background: #d97f49;
+    }
+
+    .pv-delete-btn {
+        background: #6c757d;
+    }
+
+    .pv-delete-btn:hover {
+        background: #5a6268;
+    }
+
+    .pv-empty {
+        width: 100%;
+        text-align: center;
+        padding: 16px;
+        color: #6b7280;
+    }
+
+    @media (max-width: 767px) {
+        .pv-top-row {
+            gap: 12px;
+        }
+
+        .pv-top-row .text-end {
+            text-align: left !important;
+        }
+
+        .pv-actions {
+            width: 100%;
+        }
+
+        .pv-action-btn {
+            flex: 1;
+            text-align: center;
+        }
+    }
+</style>
+<div class="breadcrumb-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb-text">
+                        <h2>View Packages</h2>
+                        <!-- <div class="bt-option">
+                            <a href="./home.html">Home</a>
+                            <span>Rooms</span>
+                        </div> -->  
+                    </div>
+                </div>  
+            </div>
+        </div>
+    </div>
+<div class="container my-3">    
+    {% if messages %}
+    <div class="row mb-3">
+        <div class="col-12">
+            {% for message in messages %}
+            <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    <div class="row pv-top-row">
+        <div class="col-lg-8">
+            <!-- space for additional controls or info -->
+        </div>
+        <div class="col-lg-4 text-end">
+            <a href="{% url 'packageadd' %}" class="btn btn-primary pv-add-btn">Add New Package</a>
+        </div>
+    </div>
+    <div class="row">
+        {% for p in packages %}
+        <div class="col-lg-4 col-md-6 pv-card-wrap" id="package-card-{{ p.package.package_id }}">
+            <div class="card pv-card">
+                {% if p.package.package_image %}
+                <img src="{{ p.package.package_image.url }}" class="card-img-top pv-card-img" alt="Package Image">
+                {% endif %}
+                <div class="card-body pv-card-body">
+                    <h5 class="card-title pv-title">{{ p.package.package_name }}</h5>
+                    <p class="card-text pv-text"><strong>Resort:</strong> {{ p.resort_name }}</p>
+                    <p class="card-text pv-text"><strong>Includes:</strong>
+                        {% if p.details %}
+                            {% for d in p.details %}
+                                {{ d.package_detail_name }} (Rs.{{ d.amount }}){% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            None
+                        {% endif %}
+                    </p>
+                    <p class="card-text pv-text"><strong>Max People:</strong> {{ p.package.max_people }}</p>
+                    <p class="card-text pv-text"><strong>Duration:</strong> {{ p.package.duration }}</p>
+                    <p class="card-text pv-text"><strong>Price:</strong> Rs.{{ p.package.total_amount }}</p>
+                    <div class="pv-actions">
+                        <a href="{% url 'packageedit' p.package.package_id %}" class="pv-action-btn pv-edit-btn">Edit</a>
+                        <a href="{% url 'packagedelete' p.package.package_id %}" class="pv-action-btn pv-delete-btn"
+                           onclick="return confirm('Are you sure you want to delete this package?');">Delete</a>
+                    </div>
+                </div>  
+            </div>
+        </div>
+        {% empty %}
+        <p class="pv-empty">No packages available. Click "Add New Package" to create one.</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% include 'resortowner/footer.html' %}

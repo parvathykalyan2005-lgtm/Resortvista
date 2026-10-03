@@ -1,0 +1,214 @@
+{% load static %}
+{% include 'admin/header.html' %}
+
+<style>
+	.admin-profile-page .hero-card {
+		background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.08) 0%, rgba(var(--bs-info-rgb), 0.06) 100%);
+		border: 1px solid rgba(var(--bs-primary-rgb), 0.14);
+	}
+
+	.admin-profile-page .profile-avatar {
+		width: 96px;
+		height: 96px;
+		object-fit: cover;
+		border-radius: 50%;
+		border: 3px solid rgba(var(--bs-primary-rgb), 0.2);
+	}
+
+	.admin-profile-page .info-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 1rem;
+		padding: 0.7rem 0;
+		border-bottom: 1px solid var(--bs-border-color-translucent);
+	}
+
+	.admin-profile-page .info-row:last-child {
+		border-bottom: 0;
+	}
+
+	.admin-profile-page .detail-box {
+		border: 1px solid var(--bs-border-color);
+		border-radius: 0.6rem;
+		padding: 0.9rem 1rem;
+		height: 100%;
+	}
+
+	.admin-profile-page .detail-label {
+		font-size: 0.75rem;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		color: var(--bs-secondary-color);
+		margin-bottom: 0.35rem;
+	}
+
+	.admin-profile-page .detail-value {
+		margin: 0;
+		font-weight: 600;
+	}
+
+	.admin-profile-page .section-subtitle {
+		font-size: 0.82rem;
+		color: var(--bs-secondary-color);
+	}
+</style>
+
+<div class="container-fluid admin-profile-page">
+	<div class="row mb-4">
+		<div class="col-12">
+			<div class="card hero-card shadow-none">
+				<div class="card-body d-md-flex align-items-center justify-content-between gap-3">
+					<div>
+						<h5 class="card-title fw-semibold mb-1">Admin Profile</h5>
+						<p class="mb-0 text-muted">Manage account identity and security settings from one place.</p>
+					</div>
+					<span class="badge rounded-pill bg-light-primary text-primary px-3 py-2">Account Management</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{% if messages %}
+	<div class="row mb-3">
+		<div class="col-12">
+			{% for message in messages %}
+			<div class="alert {% if 'error' in message.tags %}alert-danger{% elif 'success' in message.tags %}alert-success{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+				{{ message }}
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+			{% endfor %}
+		</div>
+	</div>
+	{% endif %}
+
+	<div class="row g-4 mb-4">
+		<div class="col-lg-4">
+			<div class="card h-100 border shadow-none">
+				<div class="card-body text-center py-4 px-4">
+					<img src="{% static 'admin/assets/images/profile/user-1.jpg' %}" alt="Admin profile" class="profile-avatar mb-3">
+					<h5 class="mb-1 text-capitalize">{{ admin_login.username }}</h5>
+					<p class="text-muted mb-3">System Administrator</p>
+
+					<div class="d-flex justify-content-center gap-2 flex-wrap mb-3">
+						<span class="badge bg-light-primary text-primary text-uppercase">{{ admin_login.role }}</span>
+						<span class="badge {% if admin_login.status|lower == 'accepted' or admin_login.status|lower == 'active' %}bg-light-success text-success{% else %}bg-light-warning text-warning{% endif %} text-uppercase">{{ admin_login.status }}</span>
+					</div>
+
+					<div class="text-start mt-3">
+						<div class="info-row">
+							<span class="text-muted fs-3">Login ID</span>
+							<span class="fw-semibold">{{ admin_login.login_id }}</span>
+						</div>
+						<div class="info-row">
+							<span class="text-muted fs-3">Username</span>
+							<span class="fw-semibold text-capitalize">{{ admin_login.username }}</span>
+						</div>
+						<div class="info-row">
+							<span class="text-muted fs-3">Role</span>
+							<span class="fw-semibold text-capitalize">{{ admin_login.role }}</span>
+						</div>
+						<div class="info-row">
+							<span class="text-muted fs-3">Account Status</span>
+							<span class="fw-semibold text-capitalize">{{ admin_login.status }}</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-lg-8">
+			<div class="card h-100 border shadow-none">
+				<div class="card-body p-4">
+					<h5 class="card-title fw-semibold mb-1">Account Overview</h5>
+					<p class="section-subtitle mb-4">Standard admin profile details shown for quick reference.</p>
+
+					<div class="row g-3">
+						<div class="col-md-6">
+							<div class="detail-box">
+								<p class="detail-label">Login ID</p>
+								<p class="detail-value">{{ admin_login.login_id }}</p>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="detail-box">
+								<p class="detail-label">Display Username</p>
+								<p class="detail-value text-capitalize">{{ admin_login.username }}</p>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="detail-box">
+								<p class="detail-label">Account Role</p>
+								<p class="detail-value text-capitalize">{{ admin_login.role }}</p>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="detail-box">
+								<p class="detail-label">Current Status</p>
+								<p class="detail-value text-capitalize">{{ admin_login.status }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row g-4">
+		<div class="col-lg-6">
+			<div class="card border shadow-none h-100">
+				<div class="card-body p-4">
+					<h5 class="card-title fw-semibold mb-1">Change Username</h5>
+					<p class="section-subtitle mb-3">Update your login username used for admin access.</p>
+
+					<form method="post" autocomplete="off">
+						{% csrf_token %}
+						<input type="hidden" name="action" value="update_username">
+
+						<div class="mb-3">
+							<label for="username" class="form-label">New Username</label>
+							<input type="text" class="form-control" id="username" name="username" value="{{ admin_login.username }}" maxlength="20" required>
+							<div class="form-text">Use 4-20 characters: letters, numbers, and underscore only.</div>
+						</div>
+
+						<button type="submit" class="btn btn-primary">Update Username</button>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-lg-6">
+			<div class="card border shadow-none h-100">
+				<div class="card-body p-4">
+					<h5 class="card-title fw-semibold mb-1">Change Password</h5>
+					<p class="section-subtitle mb-3">Keep your account secure by setting a strong password.</p>
+
+					<form method="post" autocomplete="off">
+						{% csrf_token %}
+						<input type="hidden" name="action" value="change_password">
+
+						<div class="mb-3">
+							<label for="current_password" class="form-label">Current Password</label>
+							<input type="password" class="form-control" id="current_password" name="current_password" maxlength="20" required>
+						</div>
+
+						<div class="mb-3">
+							<label for="new_password" class="form-label">New Password</label>
+							<input type="password" class="form-control" id="new_password" name="new_password" maxlength="20" required>
+						</div>
+
+						<div class="mb-3">
+							<label for="confirm_password" class="form-label">Confirm New Password</label>
+							<input type="password" class="form-control" id="confirm_password" name="confirm_password" maxlength="20" required>
+							<div class="form-text">8-20 characters with uppercase, lowercase, number, and special character.</div>
+						</div>
+
+						<button type="submit" class="btn btn-danger">Update Password</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% include 'admin/footer.html' %}

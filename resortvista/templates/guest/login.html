@@ -1,0 +1,567 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Login - ResortVista</title>
+	<link href="https://fonts.googleapis.com/css?family=Lora:400,700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Cabin:400,500,600,700&display=swap" rel="stylesheet">
+	<style>
+		:root {
+			--brand-gold: #dfa974;
+			--brand-gold-dark: #c98b4a;
+			--brand-dark: #19191a;
+			--brand-muted: #707079;
+			--brand-soft: #f7f7f7;
+			--brand-border: #e9e9e9;
+			--brand-gradient: linear-gradient(135deg, #19191a 0%, #3a3a3a 100%);
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			font-family: 'Cabin', sans-serif;
+			background-color: var(--brand-soft);
+		}
+
+		.login-wrapper {
+			min-height: 100vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: linear-gradient(135deg, rgba(14, 22, 40, 0.62), rgba(25, 25, 26, 0.4)),
+				url('{% static "guest/img/resortlogin1.jpg" %}') center/cover no-repeat;
+			padding: 2rem 1rem;
+			position: relative;
+			overflow: hidden;
+		}
+
+		.login-wrapper::before,
+		.login-wrapper::after {
+			content: '';
+			position: absolute;
+			border-radius: 50%;
+			background: rgba(255, 255, 255, 0.1);
+			animation: float 20s infinite ease-in-out;
+			pointer-events: none;
+			filter: blur(1px);
+		}
+
+		.login-wrapper::before {
+			width: 400px;
+			height: 400px;
+			top: -100px;
+			left: -100px;
+			animation-delay: 0s;
+		}
+
+		.login-wrapper::after {
+			width: 300px;
+			height: 300px;
+			bottom: -80px;
+			right: -80px;
+			animation-delay: 7s;
+		}
+
+		@keyframes float {
+
+			0%,
+			100% {
+				transform: translate(0, 0) scale(1);
+			}
+
+			33% {
+				transform: translate(30px, -50px) scale(1.1);
+			}
+
+			66% {
+				transform: translate(-20px, 20px) scale(0.9);
+			}
+		}
+
+		.login-card {
+			width: 100%;
+			max-width: 440px;
+			background: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.12));
+			border-radius: 24px;
+			box-shadow: 0 30px 70px rgba(10, 10, 12, 0.45);
+			border: 1px solid rgba(255, 255, 255, 0.28);
+			backdrop-filter: blur(14px);
+			-webkit-backdrop-filter: blur(14px);
+			overflow: hidden;
+			position: relative;
+			z-index: 1;
+			animation: cardEntrance 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+		}
+
+		.login-shell {
+			width: 100%;
+			max-width: 440px;
+			position: relative;
+			z-index: 1;
+		}
+
+		@keyframes cardEntrance {
+			from {
+				opacity: 0;
+				transform: translateY(50px) scale(0.9);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0) scale(1);
+			}
+		}
+
+		.login-header {
+			padding: 2.5rem 2rem 1.5rem;
+			background: transparent;
+			color: white;
+			position: relative;
+			overflow: hidden;
+			text-align: center;
+		}
+
+		.login-header::before {
+			content: '';
+			position: absolute;
+			font-size: 0;
+			top: -20px;
+			right: -20px;
+			opacity: 0;
+			transform: rotate(-15deg);
+		}
+
+		.login-header h1 {
+			font-size: 2.2rem;
+			font-weight: 900;
+			margin: 0;
+			letter-spacing: -0.5px;
+			position: relative;
+			text-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+			font-family: 'Lora', serif;
+		}
+
+		.login-header p {
+			margin: 0.8rem 0 0;
+			opacity: 0.9;
+			font-weight: 500;
+			font-size: 1.05rem;
+			position: relative;
+		}
+
+		.login-body {
+			padding: 2rem 2rem 1.5rem;
+		}
+
+		.back-link {
+			display: block;
+			text-align: center;
+			margin-bottom: 0.8rem;
+			padding: 0.2rem 0;
+			border-radius: 0;
+			background: transparent;
+			border: none;
+			color: #ffffff;
+			text-decoration: none;
+			font-weight: 600;
+			font-size: 0.84rem;
+			transition: all 0.2s ease;
+			opacity: 0.9;
+		}
+
+		.back-link:hover {
+			opacity: 1;
+			text-decoration: underline;
+		}
+
+		.form-group {
+			margin-bottom: 1.5rem;
+			animation: slideIn 0.5s ease-out backwards;
+		}
+
+		.form-group:nth-child(1) {
+			animation-delay: 0.1s;
+		}
+
+		.form-group:nth-child(2) {
+			animation-delay: 0.2s;
+		}
+
+		@keyframes slideIn {
+			from {
+				opacity: 0;
+				transform: translateX(-20px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateX(0);
+			}
+		}
+
+		.form-label {
+			display: block;
+			font-weight: 700;
+			margin-bottom: 0.6rem;
+			color: rgba(255, 255, 255, 0.95);
+			font-size: 0.95rem;
+			letter-spacing: 0.3px;
+		}
+
+		.form-control {
+			width: 100%;
+			padding: 1rem 1.25rem;
+			border: 1px solid rgba(255, 255, 255, 0.32);
+			border-radius: 12px;
+			font-size: 1rem;
+			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+			background: rgba(255, 255, 255, 0.12);
+			color: #ffffff;
+			font-family: inherit;
+		}
+
+		.form-control:hover {
+			border-color: rgba(255, 255, 255, 0.5);
+			background: rgba(255, 255, 255, 0.18);
+		}
+
+		.form-control:focus {
+			outline: none;
+			border-color: rgba(223, 169, 116, 0.95);
+			background: rgba(255, 255, 255, 0.2);
+			box-shadow: 0 0 0 4px rgba(223, 169, 116, 0.18),
+				0 8px 20px rgba(0, 0, 0, 0.25);
+			transform: translateY(-2px);
+		}
+
+		.form-control::placeholder {
+			color: rgba(255, 255, 255, 0.72);
+		}
+
+		.password-wrapper {
+			position: relative;
+		}
+
+		.password-wrapper .form-control {
+			padding-right: 3rem;
+		}
+
+		.toggle-password {
+			position: absolute;
+			right: 0.75rem;
+			top: 50%;
+			transform: translateY(-50%);
+			background: transparent;
+			border: none;
+			cursor: pointer;
+			padding: 0.5rem;
+			color: rgba(255, 255, 255, 0.82);
+			transition: all 0.25s ease;
+			border-radius: 8px;
+		}
+
+		.toggle-password:hover {
+			color: #ffffff;
+			background: rgba(255, 255, 255, 0.2);
+			transform: translateY(-50%) scale(1.1);
+		}
+
+		.toggle-password svg {
+			width: 22px;
+			height: 22px;
+			display: block;
+		}
+
+		.toggle-password .icon-eye-off {
+			display: none;
+		}
+
+		.toggle-password[aria-pressed="true"] .icon-eye {
+			display: none;
+		}
+
+		.toggle-password[aria-pressed="true"] .icon-eye-off {
+			display: block;
+		}
+
+		.helper {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 0.5rem;
+			margin-top: 0.75rem;
+			font-size: 0.9rem;
+			animation: slideIn 0.5s ease-out backwards;
+			animation-delay: 0.3s;
+		}
+
+		.helper label {
+			color: rgba(255, 255, 255, 0.82);
+			cursor: pointer;
+			transition: color 0.2s;
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+		}
+
+		.helper label:hover {
+			color: #ffffff;
+		}
+
+		.helper input[type="checkbox"] {
+			cursor: pointer;
+			width: 18px;
+			height: 18px;
+			accent-color: var(--brand-gold);
+		}
+
+		.helper a {
+			color: rgba(255, 255, 255, 0.95);
+			text-decoration: none;
+			font-weight: 600;
+			transition: all 0.2s ease;
+			position: relative;
+		}
+
+		.helper a::after {
+			content: '';
+			position: absolute;
+			bottom: -2px;
+			left: 0;
+			width: 0;
+			height: 2px;
+			background: var(--brand-gold);
+			transition: width 0.3s ease;
+		}
+
+		.helper a:hover::after {
+			width: 100%;
+		}
+
+		.btn-login {
+			width: 100%;
+			padding: 1.15rem 1.5rem;
+			border-radius: 12px;
+			font-weight: 700;
+			font-size: 1.05rem;
+			border: none;
+			cursor: pointer;
+			color: white;
+			background: var(--brand-gold);
+			box-shadow: 0 10px 30px rgba(223, 169, 116, 0.35);
+			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+			margin-top: 1.5rem;
+			letter-spacing: 0.5px;
+			position: relative;
+			overflow: hidden;
+			animation: slideIn 0.5s ease-out backwards;
+			animation-delay: 0.4s;
+		}
+
+		.btn-login::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: -100%;
+			width: 100%;
+			height: 100%;
+			background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+			transition: left 0.6s;
+		}
+
+		.btn-login:hover::before {
+			left: 100%;
+		}
+
+		.btn-login:hover {
+			transform: translateY(-3px);
+			box-shadow: 0 15px 40px rgba(223, 169, 116, 0.45);
+			background: var(--brand-gold-dark);
+		}
+
+		.btn-login:active {
+			transform: translateY(-1px);
+			box-shadow: 0 8px 25px rgba(223, 169, 116, 0.35);
+		}
+
+		.login-footer {
+			padding: 1.5rem 2rem 2rem;
+			text-align: center;
+			color: rgba(255, 255, 255, 0.85);
+			background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.1));
+			font-size: 0.95rem;
+		}
+
+		.login-footer a {
+			color: #ffffff;
+			font-weight: 700;
+			text-decoration: none;
+			transition: all 0.2s ease;
+			padding: 0.25rem 0.5rem;
+			border-radius: 6px;
+			position: relative;
+		}
+
+		.login-footer a:hover {
+			color: #ffffff;
+			background: rgba(255, 255, 255, 0.2);
+		}
+
+		.alert {
+			padding: 1rem 1.25rem;
+			margin: 0 2rem 1.5rem;
+			border-radius: 12px;
+			border-left: 4px solid;
+			font-weight: 500;
+			animation: alertSlide 0.4s ease-out;
+		}
+
+		@keyframes alertSlide {
+			from {
+				opacity: 0;
+				transform: translateY(-15px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		.alert-error {
+			background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+			color: #c53030;
+			border-color: #f56565;
+		}
+
+		.alert-success {
+			background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+			color: #22543d;
+			border-color: #48bb78;
+		}
+
+
+		@media (max-width: 480px) {
+			.login-shell {
+				max-width: 100%;
+			}
+
+			.login-card {
+				max-width: 100%;
+				border-radius: 20px;
+				margin: 1rem;
+			}
+
+			.back-link {
+				text-align: center;
+			}
+
+			.login-header {
+				padding: 2rem 1.5rem 1.25rem;
+			}
+
+			.login-header h1 {
+				font-size: 1.9rem;
+			}
+		}
+	</style>
+</head>
+
+<body>
+
+	<div class="login-wrapper">
+		<div class="login-shell">
+			<a class="back-link" href="{% url 'guestindex' %}">← Back to Home</a>
+			<div class="login-card">
+				<div class="login-header">
+					<h1>Welcome back</h1>
+					<p>Sign in to your ResortVista account</p>
+				</div>
+				<form method="POST" action="{% url 'login_process' %}">
+				{% csrf_token %}
+				{% if messages %}
+				<div class="messages">
+					{% for message in messages %}
+					{% if 'error' in message.tags %}
+					<div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+						{{ message }}
+					</div>
+					{% endif %}
+					{% endfor %}
+				</div>
+				{% endif %}
+				<div class="login-body">
+					<div class="form-group">
+						<label class="form-label" for="username">Username</label>
+						<input class="form-control" id="username" name="username" type="text"
+							placeholder="Enter your username" required>
+					</div>
+					<div class="form-group">
+						<label class="form-label" for="password">Password</label>
+						<div class="password-wrapper">
+							<input class="form-control" id="password" name="password" type="password"
+								placeholder="Enter your password" required>
+							<button type="button" class="toggle-password" aria-label="Show password"
+								aria-pressed="false">
+								<!-- Eye (show) -->
+								<svg class="icon-eye" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+									aria-hidden="true">
+									<path
+										d="M12 5C7 5 3.73 8.11 2 12c1.73 3.89 5 7 10 7s8.27-3.11 10-7c-1.73-3.89-5-7-10-7Z"
+										stroke="currentColor" stroke-width="2" stroke-linecap="round"
+										stroke-linejoin="round" />
+									<path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" stroke-width="2"
+										stroke-linecap="round" stroke-linejoin="round" />
+								</svg>
+								<!-- Eye off (hide) -->
+								<svg class="icon-eye-off" viewBox="0 0 24 24" fill="none"
+									xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+									<path d="M3 3l18 18" stroke="currentColor" stroke-width="2"
+										stroke-linecap="round" />
+									<path
+										d="M10.58 10.58A3 3 0 0 0 12 15a3 3 0 0 0 2.42-4.42M9.88 5.09A9.77 9.77 0 0 1 12 5c5 0 8.27 3.11 10 7-.66 1.47-1.56 2.8-2.65 3.93M6.22 6.22A12.66 12.66 0 0 0 2 12c1.73 3.89 5 7 10 7 1.18 0 2.32-.16 3.39-.47"
+										stroke="currentColor" stroke-width="2" stroke-linecap="round"
+										stroke-linejoin="round" />
+								</svg>
+							</button>
+						</div>
+					</div>
+					<div class="helper">
+						<label style="display:flex;align-items:center;gap:0.5rem;">
+							<input type="checkbox" name="remember" value="1"> Remember me
+						</label>
+						<a href="#" onclick="return false;">Forgot password?</a>
+					</div>
+					<button type="submit" class="btn-login" name="login">Sign In</button>
+				</div>
+				<div class="login-footer">
+					New to ResortVista? <a href="{% url 'choosereg' %}">Create an account</a>
+				</div>
+				</form>
+				</div>
+		</div>
+	</div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			const passwordInput = document.getElementById('password');
+			const toggleBtn = document.querySelector('.toggle-password');
+			if (!passwordInput || !toggleBtn) return;
+			toggleBtn.addEventListener('click', function () {
+				const isVisible = passwordInput.type === 'text';
+				passwordInput.type = isVisible ? 'password' : 'text';
+				toggleBtn.setAttribute('aria-pressed', String(!isVisible));
+				toggleBtn.setAttribute('aria-label', isVisible ? 'Show password' : 'Hide password');
+			});
+		});
+	</script>
+
+</body>
+
+</html>

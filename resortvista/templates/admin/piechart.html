@@ -1,0 +1,93 @@
+{% load static %}
+{% include 'admin/header.html' %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title fw-semibold mb-4">Bookings by Category</h5>
+                    <div class="pie-chart-container">
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    .pie-chart-container {
+        position: relative;
+        height: 500px;
+        width: 500px;
+        margin: 0 auto;
+        max-width: 100%;
+    }
+</style>
+
+{{ labels|json_script:"labels-data" }}
+{{ data|json_script:"data-data" }}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const labelsDataElement = document.getElementById('labels-data');
+        const dataDataElement = document.getElementById('data-data');
+
+        const labels = labelsDataElement ? JSON.parse(labelsDataElement.textContent) : [];
+        const data = dataDataElement ? JSON.parse(dataDataElement.textContent) : [];
+
+        const canvas = document.getElementById('pieChart');
+        if (!canvas) {
+            console.error('Canvas element not found');
+            return;
+        }
+
+        // Handle empty data case gracefully
+        if (!data || data.length === 0) {
+            const ctx = canvas.getContext('2d');
+            ctx.font = "16px Arial";
+            ctx.fillStyle = "#666";
+            ctx.textAlign = "center";
+            ctx.fillText("No booking data available", canvas.width / 2, canvas.height / 2);
+            return;
+        }
+
+        const ctx = canvas.getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Bookings',
+                    data: data,
+                    backgroundColor: [
+                        '#ff6384', '#36a2eb', '#cc65fe', '#ffce56',
+                        '#ff5733', '#33c1ff', '#c8e6c9', '#ff99cc'
+                    ],
+                    borderColor: '#fff',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: (tooltipItem) => {
+                                const label = tooltipItem.label || '';
+                                const value = tooltipItem.raw;
+                                return `${label}: ${value}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+{% include 'admin/footer.html' %}

@@ -1,0 +1,134 @@
+{% load static %}  
+{% include "admin/header.html" %}
+
+<style>
+  .card-title {
+    font-size: 1.35rem !important;
+    font-weight: 700 !important;
+    color: #1a2332 !important;
+    letter-spacing: 0.3px;
+    position: relative;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.25rem !important;
+  }
+
+  .card-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(90deg, #1e5a96 0%, #2874a6 100%);
+    border-radius: 2px;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    color: #1a2332;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-control {
+    border-radius: 6px;
+    border: 1px solid #d0dce8;
+    padding: 0.65rem 0.75rem;
+    font-size: 0.9rem;
+    transition: all 0.25s ease;
+  }
+
+  .form-control:focus {
+    border-color: #1e5a96;
+    box-shadow: 0 0 0 0.2rem rgba(30, 90, 150, 0.15);
+  }
+
+  .btn-action-group {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .btn-update {
+    background: linear-gradient(135deg, #1e5a96 0%, #2874a6 100%);
+    color: #ffffff;
+    border: none;
+    padding: 0.65rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(30, 90, 150, 0.15);
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-update:hover {
+    background: linear-gradient(135deg, #1a4d7a 0%, #1e5a96 100%);
+    box-shadow: 0 4px 12px rgba(30, 90, 150, 0.25);
+    transform: translateY(-2px);
+  }
+
+  .btn-update:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(30, 90, 150, 0.15);
+  }
+
+  .btn-cancel {
+    background: linear-gradient(135deg, #e8eef7 0%, #f0f4f8 100%);
+    color: #1e5a96;
+    border: 1px solid #d0dce8;
+    padding: 0.65rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-cancel:hover {
+    background: linear-gradient(135deg, #d0dce8 0%, #e8eef7 100%);
+    border-color: #1e5a96;
+    box-shadow: 0 2px 8px rgba(30, 90, 150, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .btn-cancel:active {
+    transform: translateY(0);
+  }
+</style>
+
+ <div class="container-fluid">
+        <div class="container-fluid">
+          <div class="card">
+            <div class="card-body">
+                  <h4 class="card-title">Edit Location</h4>
+                <div class="card">
+                <div class="card-body">
+                  <form class="forms-sample" action ="{% url 'editlocation' location.location_id %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                      <label for="districtSelect">District Name</label>
+                      <select name="district_id" class="form-control" id="districtSelect">
+                        <option value="">--Select District--</option>
+                        {% for d in district %}
+                        <option value="{{ d.district_id }}" {% if d.district_id == location.district_id.district_id %}selected{% endif %}>{{ d.district_name }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="locationName">Location Name</label>
+                      <input type="text"  name="location_name" class="form-control" id="locationName" placeholder="Location" value="{{ location.location_name }}">
+                    </div>
+                    
+                    <div class="btn-action-group">
+                      <button type="submit" class="btn-update">UPDATE</button>
+                      <a class="btn-cancel" href="{% url 'locationview' %}">Cancel</a>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+        {% include "admin/footer.html" %}

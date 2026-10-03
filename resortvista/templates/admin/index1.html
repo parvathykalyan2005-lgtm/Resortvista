@@ -1,0 +1,298 @@
+{% load static %}
+{% include 'admin/header.html' %}
+<div class="container-fluid">
+	<div class="row g-3 mb-1">
+		<div class="col-lg-4 col-sm-6">
+			<div class="card h-100 border shadow-none">
+				<div class="card-body py-3 px-4">
+					<div class="d-flex align-items-center justify-content-between">
+						<div>
+							<p class="fs-3 text-muted mb-1">Total Bookings</p>
+							<h4 class="fw-semibold mb-0">{{ total_bookings }}</h4>
+						</div>
+						<span class="bg-light-primary text-primary rounded-2 p-2 d-inline-flex align-items-center justify-content-center">
+							<i class="ti ti-calendar-event fs-6"></i>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-4 col-sm-6">
+			<div class="card h-100 border shadow-none">
+				<div class="card-body py-3 px-4">
+					<div class="d-flex align-items-center justify-content-between">
+						<div>
+							<p class="fs-3 text-muted mb-1">Registered Customers</p>
+							<h4 class="fw-semibold mb-0">{{ total_customers }}</h4>
+						</div>
+						<span class="bg-light-warning text-warning rounded-2 p-2 d-inline-flex align-items-center justify-content-center">
+							<i class="ti ti-users fs-6"></i>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-4 col-sm-6">
+			<div class="card h-100 border shadow-none">
+				<div class="card-body py-3 px-4">
+					<div class="d-flex align-items-center justify-content-between">
+						<div>
+							<p class="fs-3 text-muted mb-1">Listed Resorts</p>
+							<h4 class="fw-semibold mb-0">{{ total_resorts }}</h4>
+						</div>
+						<span class="bg-light-info text-info rounded-2 p-2 d-inline-flex align-items-center justify-content-center">
+							<i class="ti ti-building fs-6"></i>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row g-3 mt-1">
+		<div class="col-lg-8">
+			<div class="card h-100 border shadow-none">
+				<div class="card-body">
+					<div class="d-flex align-items-center justify-content-between mb-4">
+						<div>
+							<h5 class="card-title fw-semibold mb-1">Booking Report</h5>
+							<p class="fs-3 text-muted mb-0">Bookings by resort</p>
+						</div>
+						<span class="badge bg-light-primary text-primary">All Time</span>
+					</div>
+					<div id="booking-report-chart" style="min-height: 340px;"></div>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-4">
+			<div class="card h-100 border shadow-none">
+				<div class="card-body">
+					<h5 class="card-title fw-semibold mb-4">Business Insights</h5>
+					<div class="mb-3 pb-3 border-bottom">
+						<p class="fs-3 text-muted mb-1">Top Resort</p>
+						<h6 class="fw-semibold mb-0">{{ top_resort_name }} ({{ top_resort_bookings }})</h6>
+					</div>
+					<div class="mb-3 pb-3 border-bottom">
+						<p class="fs-3 text-muted mb-1">Top Category</p>
+						<h6 class="fw-semibold mb-0">{{ top_category_name }} ({{ top_category_bookings }})</h6>
+					</div>
+					<div class="mb-4">
+						<p class="fs-3 text-muted mb-1">Total Categories</p>
+						<h6 class="fw-semibold mb-0">{{ total_categories }}</h6>
+					</div>
+					<div class="d-flex flex-wrap gap-2 pt-1">
+						<a href="{% url 'categoryreg' %}" class="btn btn-outline-primary btn-sm px-3">Add Category</a>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row g-3 mt-1">
+		<div class="col-lg-7">
+			<div class="card h-100 border shadow-none">
+				<div class="card-body">
+					<h6 class="card-title fw-semibold mb-3">Resort Summary</h6>
+					<div class="table-responsive">
+						<table class="table table-hover text-nowrap mb-0 align-middle">
+							<thead class="text-dark fs-4">
+								<tr>
+									<th class="border-bottom-0 ps-0">
+										<h6 class="fw-semibold mb-0">Resort</h6>
+									</th>
+									<th class="border-bottom-0 text-end">
+										<h6 class="fw-semibold mb-0">Bookings</h6>
+									</th>
+								</tr>
+							</thead>
+							<tbody id="booking-report-table"></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-5">
+			<div class="card h-100 border shadow-none">
+				<div class="card-body">
+					<h5 class="card-title fw-semibold mb-1">Bookings by Category</h5>
+					<p class="fs-3 text-muted mb-4">Category-wise booking share</p>
+					<div class="pie-chart-container" style="position: relative; height: 360px; max-width: 100%;">
+						<canvas id="indexPieChart"></canvas>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	{{ pie_labels|json_script:"pie-labels-data" }}
+	{{ pie_data|json_script:"pie-data-data" }}
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			const labelsDataElement = document.getElementById('pie-labels-data');
+			const dataDataElement = document.getElementById('pie-data-data');
+
+			const labels = labelsDataElement ? JSON.parse(labelsDataElement.textContent) : [];
+			const data = dataDataElement ? JSON.parse(dataDataElement.textContent) : [];
+			const pieValues = data.map((value) => Number(value) || 0);
+			const pieTotal = pieValues.reduce((sum, value) => sum + value, 0);
+
+			const canvas = document.getElementById('indexPieChart');
+			if (!canvas) {
+				console.error('Canvas element for pie chart not found');
+				return;
+			}
+
+			if (!pieValues.length || pieTotal === 0) {
+				const chartContainer = canvas.parentElement;
+				if (chartContainer) {
+					chartContainer.innerHTML = '<div class="text-muted text-center py-5">No booking data available</div>';
+				}
+				return;
+			}
+
+			const ctx = canvas.getContext('2d');
+			new Chart(ctx, {
+				type: 'pie',
+				data: {
+					labels: labels,
+					datasets: [{
+						label: 'Bookings',
+						data: pieValues,
+						backgroundColor: [
+							'#ff6384', '#36a2eb', '#cc65fe', '#ffce56',
+							'#ff5733', '#33c1ff', '#c8e6c9', '#ff99cc'
+						],
+						borderColor: '#fff',
+						borderWidth: 1
+					}]
+				},
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					plugins: {
+						legend: {
+							position: 'bottom',
+							labels: {
+								usePointStyle: true,
+								boxWidth: 10
+							}
+						},
+						tooltip: {
+							callbacks: {
+								label: (tooltipItem) => {
+									const label = tooltipItem.label || '';
+									const value = tooltipItem.raw;
+									return `${label}: ${value}`;
+								}
+							}
+						}
+					}
+				}
+			});
+		});
+	</script>
+
+	<script src="{% static 'admin/assets/libs/apexcharts/dist/apexcharts.min.js' %}"></script>
+	{{ labels|json_script:"booking-labels" }}
+	{{ data|json_script:"booking-data" }}
+	<script>
+		(function () {
+			var labelsEl = document.getElementById("booking-labels");
+			var dataEl = document.getElementById("booking-data");
+			var labels = labelsEl ? JSON.parse(labelsEl.textContent) : [];
+			var seriesData = dataEl ? JSON.parse(dataEl.textContent) : [];
+
+			for (var s = 0; s < seriesData.length; s += 1) {
+				seriesData[s] = Number(seriesData[s]) || 0;
+			}
+
+			var maxValue = 0;
+			for (var i = 0; i < seriesData.length; i += 1) {
+				if (seriesData[i] > maxValue) {
+					maxValue = seriesData[i];
+				}
+			}
+			maxValue = Math.max(5, Math.ceil(maxValue * 1.2 / 5) * 5);
+
+			var chartOptions = {
+				series: [
+					{
+						name: "Bookings",
+						data: seriesData
+					}
+				],
+				chart: {
+					type: "bar",
+					height: 340,
+					toolbar: { show: true },
+					foreColor: "#adb0bb",
+					fontFamily: "inherit"
+				},
+				colors: ["#5D87FF"],
+				plotOptions: {
+					bar: {
+						borderRadius: 8,
+						columnWidth: "50%",
+						borderRadiusApplication: "end"
+					}
+				},
+				dataLabels: { enabled: false },
+				xaxis: {
+					categories: labels,
+					labels: {
+						rotate: -20,
+						style: { cssClass: "grey--text lighten-2--text fill-color" }
+					}
+				},
+				yaxis: {
+					min: 0,
+					max: maxValue,
+					tickAmount: 4,
+					labels: {
+						style: { cssClass: "grey--text lighten-2--text fill-color" }
+					}
+				},
+				grid: {
+					borderColor: "rgba(0,0,0,0.1)",
+					strokeDashArray: 3
+				},
+				tooltip: {
+					theme: "light",
+					y: {
+						formatter: function (value) {
+							return value + " bookings";
+						}
+					}
+				}
+			};
+
+			var chartEl = document.querySelector("#booking-report-chart");
+			if (chartEl && window.ApexCharts) {
+				var reportChart = new ApexCharts(chartEl, chartOptions);
+				reportChart.render();
+			}
+
+			var tableBody = document.getElementById("booking-report-table");
+			if (tableBody) {
+				var rows = "";
+				if (!labels.length) {
+					rows = "<tr><td colspan=\"2\" class=\"text-muted text-center py-3\">No data available</td></tr>";
+				} else {
+					for (var j = 0; j < labels.length; j += 1) {
+						var rowValue = seriesData[j] || 0;
+						rows += "<tr>" +
+							"<td class=\"border-bottom-0 ps-0\"><p class=\"mb-0 fw-normal\">" + labels[j] + "</p></td>" +
+							"<td class=\"border-bottom-0 text-end\"><h6 class=\"fw-semibold mb-0\">" + rowValue + "</h6></td>" +
+							"</tr>";
+					}
+				}
+				tableBody.innerHTML = rows;
+			}
+		})();
+	</script>
+
+
+
+	{% include 'admin/footer.html' %}

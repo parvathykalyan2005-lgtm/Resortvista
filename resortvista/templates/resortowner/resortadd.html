@@ -1,0 +1,270 @@
+{% load static %}
+{% include 'resortowner/header.html' %}
+<style>
+  .resort-form-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    overflow: visible;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .resort-form-card .card-header {
+    background: linear-gradient(135deg, #4394bb, #043645);
+    color: #fff;
+    padding: 14px 18px;
+  }
+
+  .resort-form-card .card-body {
+    padding: 16px;
+    background-color: #ffffff;
+  }
+
+  .form-section-title {
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 12px;
+  }
+
+  .form-label {
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .input-help {
+    font-size: 12px;
+    color: #6b7280;
+  }
+
+  .preview-box {
+    border: 1px dashed #ebebeb;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f8fafc;
+  }
+
+  .preview-box img {
+    max-height: 80px;
+    border-radius: 8px;
+  }
+
+  @media (min-width: 768px) {
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+  }
+
+  /* Ensure Nice Select fits the template visuals */
+  .nice-select {
+    width: 100%;
+    border-radius: 8px;
+    border-color: #ebebeb;
+    padding: 10px 12px;
+    height: 40px;
+    line-height: 20px;
+  }
+
+  .nice-select .list {
+    width: 100%;
+  }
+</style>
+<div class="container py-4">
+  <div class="resort-form-card card">
+    <div class="card-header">
+      <h5 class="card-title fw-semibold mb-0">Add Resort</h5>
+    </div>
+    <div class="card-body">
+      <form action="{% url 'resortadd' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="grid-2 mb-3">
+          <div class="mb-3">
+            <label class="form-label">Category</label>
+            <select class="form-select" name="category_id" required>
+              <option value="" disabled selected>Select Category</option>
+              {% for c in category %}
+              <option value="{{ c.category_id }}">{{ c.category_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Resort Name</label>
+            <input type="text" class="form-control" name="resort_name" placeholder="Resort name" required />
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" name="description" rows="3" placeholder="Brief description"
+            required></textarea>
+          <div class="input-help">Tell guests what makes your resort special.</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Resort Image</label>
+          <input type="file" class="form-control" name="resort_image" id="resortImageInput" accept="image/*" required />
+          <div class="preview-box mt-2" id="imagePreviewBox" style="display:none;">
+            <img id="imagePreview" alt="Preview" />
+            <div class="input-help">Preview of the selected image</div>
+          </div>
+        </div>
+
+        <div class="grid-2 mb-3">
+          <div class="mb-3">
+            <label for="districtSelect" class="form-label">District</label>
+            <select class="form-select" name="district_id" id="districtSelect" required onchange="loadLocations()">
+              <option value="">-- Select District --</option>
+              {% for d in districts %}
+              <option value="{{ d.district_id }}">{{ d.district_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="locationSelect" class="form-label">Location</label>
+            <select class="form-select" name="location_id" id="locationSelect" required>
+              <option value="">-- Select Location --</option>
+            </select>
+            <div class="input-help" id="locationHelp">Choose a district first to load locations.</div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Resort Address</label>
+          <textarea class="form-control" name="resort_address" rows="2" placeholder="Full address" required></textarea>
+        </div>
+        <div class="grid-2 mb-3">
+          <div class="mb-3">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" class="form-control" name="resort_phone" placeholder="Contact phone number" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Amount</label>
+            <div class="input-group">
+              <span class="input-group-text">₹</span>
+              <input type="number" class="form-control" name="amount" placeholder="Amount" min="0" step="0.01"
+                required />
+            </div>
+            <div class="input-help">Enter base price; taxes may apply.</div>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary" name="submit">Add Resort</button>
+            <a href="{% url 'ownerindex' %}" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+{% include 'resortowner/footer.html' %}
+<script>
+  function loadLocations() {
+    const districtId = document.getElementById('districtSelect').value;
+    const locationSelect = document.getElementById('locationSelect');
+    locationSelect.innerHTML = '<option value="">Loading...</option>';
+    document.getElementById('locationHelp').textContent = 'Loading locations...';
+    locationSelect.disabled = true;
+    // If Nice Select is enhancing selects, refresh after we change options
+    if (window.jQuery && typeof jQuery.fn.niceSelect === 'function') {
+      jQuery('#locationSelect').niceSelect('update');
+    }
+
+    console.log('District ID selected:', districtId);
+
+    if (!districtId) {
+      console.log('No district selected');
+      locationSelect.innerHTML = '<option value="">-- Select Location --</option>';
+      document.getElementById('locationHelp').textContent = 'Choose a district first to load locations.';
+      locationSelect.disabled = false;
+      if (window.jQuery && typeof jQuery.fn.niceSelect === 'function') {
+        jQuery('#locationSelect').niceSelect('update');
+      }
+      return;
+    }
+
+    const url = "{% url 'owner_get_locations' %}?district_id=" + encodeURIComponent(districtId);
+    console.log('Fetching locations from:', url);
+
+    fetch(url)
+      .then(r => {
+        console.log('Response status:', r.status);
+        return r.json();
+      })
+      .then(data => {
+        console.log('Locations data received:', data);
+
+        if (data.locations && data.locations.length > 0) {
+          console.log('Adding locations to dropdown...');
+          // Reset to default placeholder before adding fresh options
+          locationSelect.innerHTML = '<option value="">-- Select Location --</option>';
+          data.locations.forEach(loc => {
+            const opt = document.createElement('option');
+            opt.value = loc.location_id;
+            opt.textContent = loc.location_name;
+            locationSelect.appendChild(opt);
+            console.log('Added location:', loc.location_name);
+          });
+          // Refresh Nice Select after populating
+          if (window.jQuery && typeof jQuery.fn.niceSelect === 'function') {
+            jQuery('#locationSelect').prop('disabled', false).niceSelect('update');
+          }
+          document.getElementById('locationHelp').textContent = 'Locations loaded.';
+        } else {
+          console.log('No locations found for this district');
+          // Reset and show a clear message option
+          locationSelect.innerHTML = '<option value="">-- Select Location --</option>';
+          const opt = document.createElement('option');
+          opt.textContent = 'No locations available';
+          opt.disabled = true;
+          locationSelect.appendChild(opt);
+          if (window.jQuery && typeof jQuery.fn.niceSelect === 'function') {
+            jQuery('#locationSelect').prop('disabled', false).niceSelect('update');
+          }
+          document.getElementById('locationHelp').textContent = 'No locations available for selected district.';
+        }
+        locationSelect.disabled = false;
+      })
+      .catch(err => {
+        console.error('Fetch error:', err);
+        locationSelect.innerHTML = '<option value="">Failed to load</option>';
+        document.getElementById('locationHelp').textContent = 'Error loading locations. Try again.';
+        locationSelect.disabled = false;
+        if (window.jQuery && typeof jQuery.fn.niceSelect === 'function') {
+          jQuery('#locationSelect').niceSelect('update');
+        }
+      });
+  }
+
+  // Image preview
+  document.addEventListener('DOMContentLoaded', function () {
+    const input = document.getElementById('resortImageInput');
+    const box = document.getElementById('imagePreviewBox');
+    const img = document.getElementById('imagePreview');
+    const districtSelectEl = document.getElementById('districtSelect');
+    // Initialize Nice Select for consistent select styling
+    if (window.jQuery && typeof jQuery.fn.niceSelect === 'function') {
+      jQuery('#districtSelect, #locationSelect, select[name="category_id"]').niceSelect();
+    }
+    // Attach robust change listener to ensure load runs even with plugins
+    if (districtSelectEl) {
+      districtSelectEl.addEventListener('change', loadLocations);
+    }
+    if (input) {
+      input.addEventListener('change', function () {
+        const file = this.files && this.files[0];
+        if (file) {
+          const url = URL.createObjectURL(file);
+          img.src = url;
+          box.style.display = 'flex';
+        } else {
+          box.style.display = 'none';
+          img.src = '';
+        }
+      });
+    }
+  });
+</script>

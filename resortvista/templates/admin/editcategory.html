@@ -1,0 +1,28 @@
+{% load static %}
+{% include 'admin/header.html' %}
+      <div class="container-fluid">
+        <div class="container-fluid">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title fw-semibold mb-4">Category Update</h5>
+              <div class="card">
+                <div class="card-body">
+                  <form action="{% url 'editcategory' category.category_id %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                      <label for="exampleInputPassword1" class="form-label">Category Name  </label>
+                      <input type="text" class="form-control" id="exampleInputPassword1" name="category_name" placeholder="Category name" value="{{ category.category_name }}" required/>
+                      <label for="exampleInputPassword1" class="form-label">Category Image </label>
+                      <br>
+                      <img src="{{ category.category_image.url }}" alt="Category Image" width="100" height="100"/>
+                      <input type="file" class="form-control mt-3" src="{{ category.category_image }}"  name="category_image"  value="{{ category.category_image }}" />
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="cancel" class="btn btn-light">cancel</button>
+                  </form>
+                </div>
+              </div>
+              </div>
+            </div>
+{% include 'admin/footer.html' %} 

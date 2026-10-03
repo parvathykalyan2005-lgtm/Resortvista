@@ -1,0 +1,249 @@
+{% load static %}
+{% include 'customer/header.html' %}
+<style>
+    .rv-filter-wrap {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        background: #fff;
+        border: 1px solid #f0f0f0;
+        border-radius: 10px;
+        padding: 14px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .rv-filter-form {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        width: 100%;
+    }
+
+    .rv-select-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .rv-category-label {
+        margin: 0;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .rv-select {
+        min-width: 300px;
+        padding: 12px 16px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        height: 46px;
+        background: #fff;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .rv-filter-btn {
+        background: #eb905a;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+        letter-spacing: 0.3px;
+        transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+        padding: 12px 18px;
+        font-size: 16px;
+        height: 46px;
+        line-height: 22px;
+    }
+
+    .rv-filter-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .rv-filter-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .rv-filter-btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.2), 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .rv-clear-btn {
+        background: #777;
+        border-radius: 8px;
+        padding: 12px 18px;
+        font-size: 16px;
+        height: 46px;
+        line-height: 22px;
+    }
+
+    .rv-room-item {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        background: #fff;
+    }
+
+    .rv-clickable-card {
+        cursor: pointer;
+    }
+
+    .rv-room-item:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .rv-room-item img {
+        height: 240px;
+        width: 100%;
+        object-fit: cover;
+    }
+
+    .rv-room-image-link {
+        display: block;
+        overflow: hidden;
+    }
+
+    .rv-room-image-link img {
+        transition: transform 0.3s ease;
+    }
+
+    .rv-room-item:hover .rv-room-image-link img {
+        transform: scale(1.04);
+    }
+
+    .rv-room-item .ri-text {
+        padding: 20px;
+    }
+
+    .rv-room-item .primary-btn {
+        margin-top: 8px;
+        display: inline-block;
+    }
+
+    .rv-category-text {
+        margin: 0 0 6px 0;
+        color: #6b7280;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    @media (max-width: 576px) {
+        .rv-select {
+            min-width: 220px;
+            width: 100%;
+        }
+
+        .rv-select-wrap {
+            width: 100%;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+<!-- Breadcrumb Section Begin -->
+    <div class="breadcrumb-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb-text">
+                        <h2>Resorts</h2>
+                        {% if selected_category_name %}
+                        <p class="text-muted" style="margin-top:6px;">{{ selected_category_name }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb Section End -->
+
+    <!-- Rooms Section Begin -->
+    <section class="rooms-section spad">
+        <div class="container">
+            <!-- Filter Bar -->
+            <div class="row mb-4">
+                <div class="col-lg-12">
+                    <div class="rv-filter-wrap">
+                        <form action="{% url 'resortview' %}" method="get" class="rv-filter-form">
+                            <div class="select-option rv-select-wrap">
+                                <label for="category_id" class="rv-category-label">Category:</label>
+                                <select id="category_id" name="category_id" class="rv-select">
+                                    <option value="">All Categories</option>
+                                    {% for c in categories %}
+                                    <option value="{{ c.category_id }}" {% if selected_category_id == c.category_id %}selected{% endif %}>{{ c.category_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <button type="submit" class="primary-btn rv-filter-btn">Apply Filter</button>
+                            {% if selected_category_id %}
+                            <a href="{% url 'resortview' %}" class="primary-btn rv-clear-btn">Clear</a>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                {% for r in resorts %}
+                <div class="col-lg-4 col-md-6 mb-4" id="resort-card-{{ r.resort.resort_id }}">
+                    <div class="room-item rv-room-item rv-clickable-card" data-url="{% url 'resortsingleview' r.resort.resort_id %}" role="link" tabindex="0" aria-label="View {{ r.resort.resort_name }} details">
+                        {% if r.resort.resort_image %}
+                        <a href="{% url 'resortsingleview' r.resort.resort_id %}" class="rv-room-image-link" aria-label="View {{ r.resort.resort_name }} details">
+                            <img src="{{ r.resort.resort_image.url }}" alt="{{ r.resort.resort_name }}">
+                        </a>
+                        {% endif %}
+                        <div class="ri-text">
+                            <h4>{{ r.resort.resort_name }}</h4>
+                            {% if r.category_name %}
+                            <p class="rv-category-text">{{ r.category_name }}</p>
+                            {% endif %}
+                            <h3>Rs.{{ r.resort.amount }}<span>/Pernight</span></h3>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td class="r-o">Location:</td>
+                                        <td>{{ r.location_name }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <a href="{% url 'resortsingleview' r.resort.resort_id %}" class="primary-btn">More Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+<script>
+    (function () {
+        var cards = document.querySelectorAll('.rv-clickable-card');
+        cards.forEach(function (card) {
+            card.addEventListener('click', function (e) {
+                if (e.target.closest('a, button, input, select, textarea, label')) {
+                    return;
+                }
+                var url = card.getAttribute('data-url');
+                if (url) {
+                    window.location.href = url;
+                }
+            });
+
+            card.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    var url = card.getAttribute('data-url');
+                    if (url) {
+                        window.location.href = url;
+                    }
+                }
+            });
+        });
+    })();
+</script>
+{% include 'customer/footer.html' %}

@@ -1,0 +1,306 @@
+{% load static %}
+{% include 'customer/header.html' %}
+<style>
+    /* Polished package cards */
+    .room-item { border: 1px solid #e5eaf2; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(16,24,40,.06); transition: transform .18s ease, box-shadow .18s ease; background:#fff; height:100%; }
+    .room-item:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(16,24,40,.10); }
+    .room-item img { width:100%; height: 200px; object-fit: cover; }
+    .ri-text { padding: 14px 14px 16px 14px; }
+    .ri-text h4 { margin: 6px 0 4px 0; font-weight: 700; color:#0f172a; }
+    .ri-text h3 { margin: 0 0 8px 0; font-size: 1.15rem; color:#0f172a; }
+    .ri-text h3 span { color:#64748b; font-size: .95rem; font-weight: 500; }
+    .pkg-meta { display:flex; flex-wrap:wrap; gap:8px; margin-bottom: 8px; }
+    .chip { display:inline-block; padding:4px 8px; border-radius:999px; border:1px solid #e2e8f0; background:#f8fafc; color:#334155; font-size:.85rem; }
+    .package-select { margin-top: 10px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 10px; border:1px solid #e2e8f0; border-radius:8px; background:#f8fafc; }
+    .package-select .form-check-label { display:flex; align-items:center; gap:8px; margin:0; cursor: pointer; }
+    .selection-summary { position: relative; }
+
+    /* Availability status styles */
+    .availability-box.available { background:#f0fdf4; border:1px solid #86efac; }
+    .availability-box.unavailable { background:#fef2f2; border:1px solid #fca5a5; }
+
+    @media (max-width: 992px) { .room-item img { height: 180px; } }
+    @media (max-width: 576px) { .ri-text { padding: 12px; } }
+</style>
+<!-- Breadcrumb Section Begin -->
+    <div class="breadcrumb-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb-text">
+                        <h2>Resort Details</h2>
+                        <div class="bt-option">
+                            <a href="{% url 'customerindex' %}">Home</a>
+                            <a href="{% url 'resortview' %}">Resorts</a>
+                            <span>{{ resort.resort_name|default:"Details" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb Section End -->
+
+    <!-- Room Details Section Begin -->
+    <section class="room-details-section spad">
+        <div class="container">
+            {% if resort %}
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="room-details-item">
+                        {% if resort.resort_image %}
+                        <img src="{{ resort.resort_image.url }}" alt="{{ resort.resort_name }}" />
+                        {% else %}
+                        <img src="{% static 'guest/img/room/room-details.jpg' %}" alt="Resort" />
+                        {% endif %}
+                        <div class="rd-text">
+                            <div class="rd-title">
+                                <h3>{{ resort.resort_name }}</h3>
+                                <div class="rdt-right">
+                                    <div class="rating">
+                                        <i class="icon_star"></i>
+                                        <i class="icon_star"></i>
+                                        <i class="icon_star"></i>
+                                        <i class="icon_star"></i>
+                                        <i class="icon_star-half_alt"></i>
+                                    </div>
+                                    <a href="{% url 'booking' resort.resort_id %}" class="primary-btn">Book Now</a>
+                                </div>
+                            </div>
+                            <h2>Rs.{{ resort.amount }}<span>/Pernight</span></h2>
+                            <table>
+                                <tbody>
+                                    {% if category_name %}
+                                    <tr>
+                                        <td class="r-o">Category:</td>
+                                        <td>{{ category_name }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if location_name %}
+                                    <tr>
+                                        <td class="r-o">Location:</td>
+                                        <td>{{ location_name }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if resort.resort_address %}
+                                    <tr>
+                                        <td class="r-o">Address:</td>
+                                        <td>{{ resort.resort_address }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if resort.resort_phone %}
+                                    <tr>
+                                        <td class="r-o">Phone:</td>
+                                        <td>{{ resort.resort_phone }}</td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                            {% if resort.description %}
+                            <p class="f-para">{{ resort.description }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="room-booking" id="reservation">
+                        <h3>Your Reservation</h3>
+                        <form action="{% url 'check_availability' resort.resort_id %}" method="post">
+                            {% csrf_token %}
+                            <div class="check-date">
+                                <label for="date-in">Check In:</label>
+                                <input type="date" class="date-input" id="date-in" name="date_in" value="{{ availability.date_in|default:'' }}">
+                           
+                            </div>
+                            <div class="check-date">
+                                <label for="date-out">Check Out:</label>
+                                <input type="date" class="date-input" id="date-out" name="date_out" value="{{ availability.date_out|default:'' }}">
+                            </div>
+                            <button type="submit">Check Availability</button>
+                        </form>
+                        {% if availability and availability.checked %}
+                            <div class="availability-box {% if availability.status == 'available' %}available{% else %}unavailable{% endif %}" style="margin-top:15px; padding:12px; border-radius:8px;">
+                                {% if availability.status == 'available' %}
+                                    <p style="color:#166534; font-weight:600; margin:0 0 8px 0;">{{ availability.message }}</p>
+                                    <a class="primary-btn" style="width:100%; text-align:center; display:block; margin-top:8px;" href="{% url 'booking' resort.resort_id %}?date_in={{ availability.date_in }}&date_out={{ availability.date_out }}">Proceed to Booking</a>
+                                {% else %}
+                                    <p style="color:#991b1b; font-weight:600; margin:0;">{{ availability.message }}</p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <!-- Packages Section -->
+            <div class="row mt-5">
+                <div class="col-lg-12">
+                    <h3>Available Packages</h3>
+                </div>
+            </div>
+            <div class="row">
+                {% if packages %}
+                    {% for pkg in packages %}
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="room-item">
+                            {% if pkg.package_image %}
+                            <img src="{{ pkg.package_image.url }}" alt="{{ pkg.package_name }}">
+                            {% else %}
+                            <img src="{% static 'guest/img/room/room-b1.jpg' %}" alt="{{ pkg.package_name }}">
+                            {% endif %}
+                            <div class="ri-text">
+                                <h4>{{ pkg.package_name }}</h4>
+                                <h3>Rs.{{ pkg.total_amount }}<span> / {{ pkg.duration }}</span></h3>
+                                <div class="pkg-meta">
+                                    <span class="chip">{{ pkg.duration }}</span>
+                                    {% if pkg.max_people %}
+                                    <span class="chip">Up to {{ pkg.max_people }} people</span>
+                                    {% endif %}
+                                </div>
+                                <!-- Multi-select controls -->
+                                <div class="package-select">
+                                    <label class="form-check-label">
+                                        <input type="checkbox" class="pkg-select" name="package_ids" value="{{ pkg.package_id }}" data-id="{{ pkg.package_id }}" data-price="{{ pkg.total_amount|default:0 }}">
+                                        <span style="font-weight:600; color:#1e293b;">Add</span>
+                                    </label>
+                                    <!-- <div style="display:flex; align-items:center; gap:8px;">    
+                                        <span style="color:#64748b;">Qty</span>
+                                        <input type="number" class="pkg-qty" data-id="{{ pkg.package_id }}" min="1" value="1" style="width:80px; padding:6px 10px; border:1px solid #cbd5e1; border-radius:6px;">
+                                    </div> -->
+                                </div>
+                                {% if pkg.package_includes %}
+                                <p class="text-muted" style="margin:8px 0 0 0;">Includes: {{ pkg.package_includes|truncatechars:100 }}</p>
+                                {% endif %}
+                                
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="col-lg-12">
+                    <p>No packages are currently available for this resort.</p>
+                </div>
+                {% endif %}
+            </div>
+            <!-- Selection summary bar -->
+            {% if packages %}
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="selection-summary" style="margin-top:12px; padding:12px 16px; border:1px solid #e2e8f0; border-radius:10px; background:#f1f5f9; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+                        <div class="summary-left" style="display:flex; align-items:center; gap:16px; color:#0f172a;">
+                            <span>Selected: <strong id="selected-count">0</strong></span>
+                            <span>Estimated Total: <strong id="selected-total">Rs.0</strong></span>
+                        </div>
+                        <div class="summary-right" style="display:flex; align-items:center; gap:10px;">
+                            <a href="{% url 'customize_packages' resort.resort_id %}" class="primary-btn" style="background:#eef3f9; color:#1e5a96; border:1px solid #d0dce8;" id="customize-selected-btn">Customize Selected</a>
+                        </div>
+                    </div>
+                    <p class="text-muted" style="margin-top:6px;">Select one or more packages above, adjust quantities, then proceed.</p>
+                </div>
+            </div>
+            {% endif %}
+            {% else %}
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>Sorry, the requested resort was not found.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div> 
+    </section>
+    <script>
+    (function() {
+        function formatCurrency(num) {
+            var n = Number(num) || 0;
+            return 'Rs.' + n.toLocaleString('en-IN');
+        }
+
+        function getSelection() {
+            var selected = Array.prototype.slice.call(document.querySelectorAll('.pkg-select:checked'));
+            var ids = [];
+            var quantities = [];
+            var total = 0;
+            selected.forEach(function(el) {
+                var id = el.value || el.getAttribute('data-id');
+                var price = Number(el.getAttribute('data-price')) || 0;
+                var qtyEl = document.querySelector('.pkg-qty[data-id="' + id + '"]');
+                var qty = qtyEl ? parseInt(qtyEl.value, 10) : 1;
+                if (isNaN(qty) || qty < 1) qty = 1;
+                ids.push(id);
+                quantities.push(qty);
+                total += price * qty;
+            });
+            return { ids: ids, quantities: quantities, total: total, count: selected.length };
+        }
+
+        function updateSummary() {
+            var sel = getSelection();
+            var countEl = document.getElementById('selected-count');
+            var totalEl = document.getElementById('selected-total');
+            if (countEl) countEl.textContent = String(sel.count);
+            if (totalEl) totalEl.textContent = formatCurrency(sel.total);
+        }
+
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('pkg-select') || e.target.classList.contains('pkg-qty')) {
+                updateSummary();
+            }
+        });
+
+        updateSummary();
+
+        var dateInEl = document.getElementById('date-in');
+        var dateOutEl = document.getElementById('date-out');
+
+        var customizeBtn = document.getElementById('customize-selected-btn');
+        if (customizeBtn) {
+            customizeBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var sel = getSelection();
+                if (sel.ids.length === 0) {
+                    alert('Please select at least one package.');
+                    return;
+                }
+                var params = new URLSearchParams();
+                params.set('package_ids', sel.ids.join(','));
+                params.set('quantities', sel.quantities.join(','));
+                if (dateInEl && dateInEl.value) params.set('date_in', dateInEl.value);
+                if (dateOutEl && dateOutEl.value) params.set('date_out', dateOutEl.value);
+                window.location.href = "{% url 'customize_packages' resort.resort_id %}?" + params.toString();
+            });
+        }
+
+        var proceedLink = document.getElementById('proceed-selected-link');
+        function updateProceedLink() {
+            if (!proceedLink) return;
+            var base = proceedLink.getAttribute('data-booking-url');
+            var sel = getSelection();
+            if (sel.ids.length === 0) {
+                proceedLink.setAttribute('href', '#');
+                return;
+            }
+            var params = new URLSearchParams();
+            // Attach the first selected package id
+            params.set('package_id', sel.ids[0]);
+            if (dateInEl && dateInEl.value) params.set('date_in', dateInEl.value);
+            if (dateOutEl && dateOutEl.value) params.set('date_out', dateOutEl.value);
+            proceedLink.setAttribute('href', base + '?' + params.toString());
+        }
+        if (proceedLink) {
+            proceedLink.addEventListener('click', function(e) {
+                if (this.getAttribute('href') === '#') {
+                    e.preventDefault();
+                    alert('Please select at least one package.');
+                }
+            });
+        }
+
+        // Initial setup and on selection changes
+        updateProceedLink();
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('pkg-select') || e.target.classList.contains('pkg-qty')) {
+                updateProceedLink();
+            }
+        });
+    })();
+    </script>
+{% include 'customer/footer.html' %}

@@ -1,0 +1,140 @@
+{% load static %}
+{% include 'guest/header.html' %}
+
+<style>
+	:root {
+		--choice-primary: #dfa974;
+		--choice-dark: #19191a;
+		--choice-muted: #707079;
+		--choice-bg: #f7f7f7;
+	}
+
+	.choice-section {
+		background: var(--choice-bg);
+		padding: 80px 0;
+		min-height: 70vh;
+	}
+
+	.choice-header {
+		text-align: center;
+		margin-bottom: 40px;
+	}
+
+	.choice-header h2 {
+		font-size: 34px;
+		color: var(--choice-dark);
+		margin-bottom: 10px;
+		font-weight: 700;
+	}
+
+	.choice-header p {
+		color: var(--choice-muted);
+		font-size: 16px;
+	}
+
+	.choice-card {
+		background: #ffffff;
+		border-radius: 12px;
+		padding: 32px 28px;
+		box-shadow: 0 10px 25px rgba(25, 25, 26, 0.08);
+		text-align: center;
+		height: 100%;
+		transition: transform 0.3s ease, box-shadow 0.3s ease;
+	}
+
+	.choice-card:hover {
+		transform: translateY(-6px);
+		box-shadow: 0 16px 30px rgba(25, 25, 26, 0.12);
+	}
+
+	.choice-icon {
+		width: 64px;
+		height: 64px;
+		border-radius: 50%;
+		background: rgba(223, 169, 116, 0.15);
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		margin-bottom: 18px;
+		color: var(--choice-primary);
+		font-size: 26px;
+	}
+
+	.choice-card h3 {
+		font-size: 22px;
+		color: var(--choice-dark);
+		margin-bottom: 10px;
+		font-weight: 700;
+	}
+
+	.choice-card p {
+		color: var(--choice-muted);
+		font-size: 14px;
+		margin-bottom: 20px;
+	}
+
+	.choice-btn {
+		display: inline-block;
+		padding: 12px 22px;
+		background: var(--choice-primary);
+		color: #ffffff;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 1px;
+		border-radius: 4px;
+		transition: background 0.3s ease;
+	}
+
+	.choice-btn:hover {
+		background: #c98b4a;
+		color: #ffffff;
+	}
+
+	.choice-note {
+		text-align: center;
+		margin-top: 30px;
+		color: var(--choice-muted);
+		font-size: 14px;
+	}
+
+	.choice-note a {
+		color: var(--choice-dark);
+		font-weight: 600;
+	}
+</style>
+
+<section class="choice-section">
+	<div class="container">
+		<div class="choice-header">
+			<h2>Choose Your Registration</h2>
+			<p>Select the account type that best fits you.</p>
+		</div>
+		<div class="row">
+			<div class="col-lg-6 col-md-6">
+				<div class="choice-card">
+					<div class="choice-icon">
+						<i class="fa fa-building"></i>
+					</div>
+					<h3>Resort Owner</h3>
+					<p>List your resort, manage packages, and reach new customers.</p>
+					<a href="{% url 'resortownerreg' %}" class="choice-btn">Register as Owner</a>
+				</div>
+			</div>
+			<div class="col-lg-6 col-md-6">
+				<div class="choice-card">
+					<div class="choice-icon">
+						<i class="fa fa-user"></i>
+					</div>
+					<h3>Customer</h3>
+					<p>Book stays, customize packages, and enjoy great experiences.</p>
+					<a href="{% url 'customerreg' %}" class="choice-btn">Register as Customer</a>
+				</div>
+			</div>
+		</div>
+		<div class="choice-note">
+			Already have an account? <a href="{% url 'login' %}">Login here</a>
+		</div>
+	</div>
+</section>
+
+{% include 'guest/footer.html' %}

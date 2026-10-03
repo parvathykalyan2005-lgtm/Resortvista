@@ -1,0 +1,140 @@
+{% load static %}
+{% include 'admin/header.html' %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-body">
+					<div class="d-flex align-items-center justify-content-between mb-4">
+						<div>
+							<h5 class="card-title fw-semibold mb-1">Booking Report</h5>
+							<p class="fs-3 text-muted mb-0">Bookings by resort</p>
+						</div>
+						<div class="text-end">
+							<span class="badge bg-light-primary text-primary">All time</span>
+						</div>
+					</div>
+					<div id="booking-report-chart" style="min-height: 340px;"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-body">
+					<h6 class="card-title fw-semibold mb-3">Resort Summary</h6>
+					<div class="table-responsive">
+						<table class="table text-nowrap mb-0 align-middle">
+							<thead class="text-dark fs-4">
+								<tr>
+									<th class="border-bottom-0"><h6 class="fw-semibold mb-0">Resort</h6></th>
+									<th class="border-bottom-0"><h6 class="fw-semibold mb-0">Bookings</h6></th>
+								</tr>
+							</thead>
+							<tbody id="booking-report-table"></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="{% static 'admin/assets/libs/apexcharts/dist/apexcharts.min.js' %}"></script>
+{{ labels|json_script:"booking-labels" }}
+{{ data|json_script:"booking-data" }}
+<script>
+	(function () {
+		var labelsEl = document.getElementById("booking-labels");
+		var dataEl = document.getElementById("booking-data");
+		var labels = labelsEl ? JSON.parse(labelsEl.textContent) : [];
+		var seriesData = dataEl ? JSON.parse(dataEl.textContent) : [];
+
+		var maxValue = 0;
+		for (var i = 0; i < seriesData.length; i += 1) {
+			if (seriesData[i] > maxValue) {
+				maxValue = seriesData[i];
+			}
+		}
+		maxValue = Math.max(5, Math.ceil(maxValue * 1.2 / 5) * 5);
+
+		var chartOptions = {
+			series: [
+				{
+					name: "Bookings",
+					data: seriesData
+				}
+			],
+			chart: {
+				type: "bar",
+				height: 340,
+				toolbar: { show: true },
+				foreColor: "#adb0bb",
+				fontFamily: "inherit"
+			},
+			colors: ["#5D87FF"],
+			plotOptions: {
+				bar: {
+					borderRadius: 8,
+					columnWidth: "50%",
+					borderRadiusApplication: "end"
+				}
+			},
+			dataLabels: { enabled: false },
+			xaxis: {
+				categories: labels,
+				labels: {
+					rotate: -20,
+					style: { cssClass: "grey--text lighten-2--text fill-color" }
+				}
+			},
+			yaxis: {
+				min: 0,
+				max: maxValue,
+				tickAmount: 4,
+				labels: {
+					style: { cssClass: "grey--text lighten-2--text fill-color" }
+				}
+			},
+			grid: {
+				borderColor: "rgba(0,0,0,0.1)",
+				strokeDashArray: 3
+			},
+			tooltip: {
+				theme: "light",
+				y: {
+					formatter: function (value) {
+						return value + " bookings";
+					}
+				}
+			}
+		};
+
+		var chartEl = document.querySelector("#booking-report-chart");
+		if (chartEl && window.ApexCharts) {
+			var reportChart = new ApexCharts(chartEl, chartOptions);
+			reportChart.render();
+		}
+
+		var tableBody = document.getElementById("booking-report-table");
+		if (tableBody) {
+			var rows = "";
+			if (!labels.length) {
+				rows = "<tr><td colspan=\"2\" class=\"text-muted\">No data available</td></tr>";
+			} else {
+				for (var j = 0; j < labels.length; j += 1) {
+					rows += "<tr>" +
+						"<td class=\"border-bottom-0\"><p class=\"mb-0 fw-normal\">" + labels[j] + "</p></td>" +
+						"<td class=\"border-bottom-0\"><h6 class=\"fw-semibold mb-0\">" + seriesData[j] + "</h6></td>" +
+						"</tr>";
+				}
+			}
+			tableBody.innerHTML = rows;
+		}
+	})();
+</script>
+
+{% include 'admin/footer.html' %}

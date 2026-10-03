@@ -1,0 +1,23 @@
+{% load static %}
+{% include 'admin/header.html' %}
+      <div class="container-fluid">
+        <div class="container-fluid">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title fw-semibold mb-4">Edit District Registration</h5>
+              <div class="card">
+                <div class="card-body">
+                  <form action="{% url 'editdistrict' district.district_id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                      <label for="exampleInputPassword1" class="form-label">District Name  </label>
+                      <input type="text" class="form-control" id="exampleInputPassword1" name="district_name" placeholder="District name" value="{{ district.district_name }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="cancel" class="btn btn-light">cancel</button>
+                  </form>
+                </div>
+              </div>
+              </div>
+            </div>
+{% include 'admin/footer.html' %}

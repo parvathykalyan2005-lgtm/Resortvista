@@ -1,0 +1,503 @@
+{% load static %}
+{% include 'guest/header.html' %}
+
+<style>
+  :root {
+    --primary: #1e5a96;
+    --primary-dark: #1a4d7a;
+    --primary-light: #2874a6;
+    --secondary: #e74c3c;
+    --success: #27ae60;
+    --light: #ecf0f1;
+    --dark: #1a2332;
+    --border: #d0dce8;
+    --text-muted: #7a8a9a;
+  }
+
+  .registration-wrapper {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e9ecf1 100%);
+    padding: 3rem 0;
+    min-height: 100vh;
+  }
+
+  .registration-container {
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .registration-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .registration-header h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--dark);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.5px;
+  }
+
+  .registration-header p {
+    color: var(--text-muted);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .card {
+    border: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #ffffff;
+  }
+
+  .card-body {
+    padding: 2.5rem !important;
+  }
+
+  .card-title {
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    color: var(--dark) !important;
+    letter-spacing: 0.3px;
+    position: relative;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem !important;
+  }
+
+  .card-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+    border-radius: 2px;
+  }
+
+  .form-section {
+    margin-bottom: 2rem;
+  }
+
+  .form-section:last-child {
+    margin-bottom: 0;
+  }
+
+  .form-section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--border);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+
+  .form-label {
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 0.6rem;
+    display: block;
+    font-size: 0.95rem;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.25s ease;
+    background-color: #ffffff;
+  }
+
+  .form-control:hover {
+    border-color: #a0b0c8;
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(30, 90, 150, 0.15);
+    background-color: #ffffff;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .form-row.full {
+    grid-template-columns: 1fr;
+  }
+
+  .password-hint {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: #f8fafb;
+    border-radius: 6px;
+    border-left: 3px solid var(--primary);
+  }
+
+  .password-hint strong {
+    color: var(--dark);
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .form-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    justify-content: center;
+  }
+
+  .btn {
+    padding: 0.85rem 2.5rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+  }
+
+  .btn-register {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(30, 90, 150, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    min-width: 160px;
+  }
+
+  .btn-register:hover {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+    box-shadow: 0 6px 18px rgba(30, 90, 150, 0.35);
+    transform: translateY(-3px);
+  }
+
+  .btn-register:active {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(30, 90, 150, 0.2);
+  }
+
+  .btn-cancel {
+    background: linear-gradient(135deg, #f0f4f8 0%, #e8eef7 100%);
+    color: var(--primary);
+    border: 2px solid var(--border);
+    min-width: 160px;
+  }
+
+  .btn-cancel:hover {
+    background: linear-gradient(135deg, #e8eef7 0%, #dfe8f0 100%);
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(30, 90, 150, 0.1);
+    transform: translateY(-3px);
+  }
+
+  .btn-cancel:active {
+    transform: translateY(-1px);
+  }
+
+  .alert {
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid;
+    animation: slideDown 0.3s ease;
+    font-weight: 500;
+  }
+
+  .alert-error {
+    background-color: #fadbd8;
+    color: #78281f;
+    border-color: var(--secondary);
+  }
+
+  .alert-success {
+    background-color: #d5f4e6;
+    color: #0b5345;
+    border-color: var(--success);
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .footer-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .footer-link a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 700;
+    transition: color 0.25s ease;
+  }
+
+  .footer-link a:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .form-buttons {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      width: 100%;
+    }
+
+    .card-body {
+      padding: 1.5rem !important;
+    }
+
+    .registration-header h1 {
+      font-size: 1.75rem;
+    }
+
+    .registration-wrapper {
+      padding: 1.5rem 0;
+    }
+  }
+
+  .btn-update {
+    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    color: #ffffff;
+    border: none;
+    padding: 0.65rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-update:hover {
+    background: linear-gradient(135deg, #45a049 0%, #4caf50 100%);
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .btn-update:active {
+    transform: translateY(0);
+  }
+</style>
+
+<div class="registration-wrapper">
+  <div class="registration-container">
+    <div class="registration-header">
+      <h1>Customer Registration</h1>
+      <p>Join ResortVista and explore the best resorts</p>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Create Your Account</h5>
+
+
+        <form method="POST" action="{% url 'customerreg' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <!-- Personal Information -->
+          <div class="form-section">
+            <div class="form-section-title">Personal Information</div>
+            <div class="form-group">
+              <label for="name" class="form-label">Full Name *</label>
+              <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" required pattern="[A-Za-z ]{3,60}" title="Name must be 3-60 letters only">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="email" class="form-label">Email Address *</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email address"
+                  required>
+              </div>
+              <div class="form-group">
+                <label for="phone" class="form-label">Phone Number *</label>
+                <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone number"
+                  required pattern="[0-9]{10}" minlength="10" maxlength="10" inputmode="numeric" title="Phone number must be exactly 10 digits">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="districtSelect" class="form-label">District *</label>
+                <select class="form-control" name="district_id" id="districtSelect" required onchange="loadLocations()">
+                  <option value="">--Select District--</option>
+                  {% for d in districts %}
+                  <option value="{{ d.district_id }}">{{ d.district_name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="locationSelect" class="form-label">Location *</label>
+                <select class="form-control" name="location_id" id="locationSelect" required>
+                  <option value="">--Select Location--</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="address" class="form-label">Address *</label>
+              <input type="text" class="form-control" id="address" name="address" placeholder="Enter your address"
+                required minlength="5" maxlength="255" title="Address must be between 5 and 255 characters">
+            </div>
+          </div>
+          <!-- Account Information -->
+          <div class="form-section">
+            <div class="form-section-title">Account Information</div>
+            <div class="form-group">
+              <label for="username" class="form-label">Username *</label>
+              <input type="text" class="form-control" id="username" name="username" placeholder="Create a username"
+                required pattern="[A-Za-z0-9_]{4,20}" minlength="4" maxlength="20" title="Username must be 4-20 characters (letters, numbers, underscore only)">
+            </div>
+            <div class="form-group">
+              <label for="password" class="form-label">Password *</label>
+              <input type="password" class="form-control" id="password" name="password"
+                placeholder="Create a strong password" required minlength="8" maxlength="64" pattern="(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,64}" title="Password must be at least 8 characters and include a letter, a number, and a special character">
+            </div>
+          </div>
+
+          <!-- Buttons -->
+          <div class="form-buttons">
+            <button type="submit" class="btn btn-register">Register</button>
+            <a href="{% url 'guestindex' %}" class="btn btn-cancel">Cancel</a>
+          </div>
+
+          <div class="footer-link">
+            Already have an account? <a href="{% url 'guestindex' %}">Sign in here</a>
+          </div>
+        </form>
+     </div>
+     </div>
+     </div>
+     </div>
+     </div>
+     </div>
+
+{% include 'guest/footer.html' %}
+<script>
+  const customerRegForm = document.querySelector("form[action=\"{% url 'customerreg' %}\"]");
+  if (customerRegForm) {
+    customerRegForm.addEventListener('submit', function (e) {
+      const district = document.getElementById('districtSelect');
+      const location = document.getElementById('locationSelect');
+      const phone = document.getElementById('phone');
+
+      if (phone && phone.value) {
+        phone.value = phone.value.replace(/\D/g, '').slice(0, 10);
+      }
+
+      if (!district.value) {
+        e.preventDefault();
+        alert('Please select a district.');
+        district.focus();
+        return;
+      }
+
+      if (!location.value) {
+        e.preventDefault();
+        alert('Please select a location.');
+        location.focus();
+        return;
+      }
+
+      if (!this.checkValidity()) {
+        e.preventDefault();
+        this.reportValidity();
+      }
+    });
+  }
+
+  function loadLocations() {
+    const districtId = document.getElementById('districtSelect').value;
+    const locationSelect = document.getElementById('locationSelect');
+    locationSelect.innerHTML = '<option value="">--Select Location--</option>';
+    // If Nice Select is enhancing selects, refresh after we change options
+    if (window.jQuery && typeof jQuery.fn.niceSelect === 'function') {
+      jQuery('#locationSelect').niceSelect('update');
+    }
+
+    console.log('District ID selected:', districtId);
+
+    if (!districtId) {
+      console.log('No district selected');
+      return;
+    }
+
+    const url = "{% url 'ajax_get_locations_customer' %}?district_id=" + districtId;
+    console.log('Fetching locations from:', url);
+
+    fetch(url)
+      .then(r => {
+        console.log('Response status:', r.status);
+        return r.json();
+      })
+      .then(data => {
+        console.log('Locations data received:', data);
+
+        if (data.locations && data.locations.length > 0) {
+          console.log('Adding locations to dropdown...');
+          data.locations.forEach(loc => {
+            const opt = document.createElement('option');
+            opt.value = loc.location_id;
+            opt.textContent = loc.location_name;
+            locationSelect.appendChild(opt);
+            console.log('Added location:', loc.location_name);
+          });
+          // Refresh Nice Select after populating
+          if (window.jQuery && typeof jQuery.fn.niceSelect === 'function') {
+            jQuery('#locationSelect').niceSelect('update');
+          }
+        } else {
+          console.log('No locations found for this district');
+          const opt = document.createElement('option');
+          opt.textContent = 'No locations available';
+          opt.disabled = true;
+          locationSelect.appendChild(opt);
+          if (window.jQuery && typeof jQuery.fn.niceSelect === 'function') {
+            jQuery('#locationSelect').niceSelect('update');
+          }
+        }
+      })
+      .catch(err => {
+        console.error('Fetch error:', err);
+        alert('Error loading locations: ' + err);
+      });
+  }
+</script>

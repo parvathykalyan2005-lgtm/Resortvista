@@ -1,0 +1,321 @@
+{% load static %}
+{% include 'admin/header.html' %}
+
+<style>
+  /* Card & Title Styling */
+  .card {
+    border: none;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  }
+
+  .card-body {
+    padding: 1.5rem !important;
+  }
+
+  .card-title {
+    font-size: 1.35rem !important;
+    font-weight: 700 !important;
+    color: #1a2332 !important;
+    letter-spacing: 0.3px;
+    position: relative;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.25rem !important;
+  }
+
+  .card-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(90deg, #1e5a96 0%, #2874a6 100%);
+    border-radius: 2px;
+  }
+
+  /* Form Label & Select */
+  .form-label {
+    font-weight: 600;
+    color: #1a2332;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .form-control {
+    border-radius: 6px;
+    border: 1px solid #d0dce8;
+    padding: 0.75rem 0.85rem;
+    font-size: 0.9rem;
+    transition: all 0.25s ease;
+    background-color: #ffffff;
+  }
+
+  .form-control:hover {
+    border-color: #a0b0c8;
+  }
+
+  .form-control:focus {
+    border-color: #1e5a96;
+    box-shadow: 0 0 0 0.2rem rgba(30, 90, 150, 0.15);
+    background-color: #ffffff;
+  }
+
+  /* Table Styling */
+  .table {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+  }
+
+  .table thead {
+    background: linear-gradient(135deg, #f0f4f8 0%, #e8eef7 100%);
+    border-top: 1px solid #e0e8f0;
+  }
+
+  .table thead th {
+    border-bottom: 2px solid #d0dce8;
+    padding: 1rem 0.85rem !important;
+    background: none;
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+    color: #1e5a96 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin: 0;
+  }
+
+  .table tbody tr {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-bottom: 1px solid #f0f4f8;
+  }
+
+  .table tbody tr:hover {
+    background-color: #f8fafb;
+    box-shadow: 0 1px 4px rgba(30, 90, 150, 0.08);
+  }
+
+  .table tbody td {
+    padding: 1.1rem 0.85rem !important;
+    vertical-align: middle;
+    color: #3a4a5c;
+    font-weight: 500;
+  }
+
+  .table tbody td:first-child {
+    color: #7a8a9a;
+    font-weight: 600;
+  }
+
+  /* Action Links - Premium Style */
+  .action-links {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .action-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.55rem 1.1rem;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-decoration: none;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-sizing: border-box;
+    user-select: none;
+  }
+
+  /* Edit Button */
+  .action-link.edit {
+    background: linear-gradient(135deg, #1e5a96 0%, #2874a6 100%);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(30, 90, 150, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .action-link.edit:hover {
+    background: linear-gradient(135deg, #1a4d7a 0%, #1e5a96 100%);
+    box-shadow: 0 4px 14px rgba(30, 90, 150, 0.3);
+    transform: translateY(-2px);
+  }
+
+  .action-link.edit:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(30, 90, 150, 0.15);
+  }
+
+  /* Delete Button */
+  .action-link.delete {
+    background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(192, 57, 43, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .action-link.delete:hover {
+    background: linear-gradient(135deg, #a93226 0%, #c0392b 100%);
+    box-shadow: 0 4px 14px rgba(192, 57, 43, 0.3);
+    transform: translateY(-2px);
+  }
+
+  .action-link.delete:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(192, 57, 43, 0.15);
+  }
+
+  /* No Data Message */
+  #no-data {
+    text-align: center;
+  }
+
+  #no-data td {
+    padding: 2.5rem 1rem !important;
+    color: #7a8a9a !important;
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  /* Container Spacing */
+  .mb-3 {
+    margin-bottom: 1.5rem !important;
+  }
+</style>
+
+<div class="container-fluid">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title fw-semibold mb-4">Location View</h5>
+        <div class="card">
+          <div class="card-body">
+            <div class="mb-3">
+              <select class="form-control" name="district" id="district-select"
+                data-url="{% url 'admin_get_locations' %}" data-edit-url="{% url 'editlocation' id=0 %}"
+                data-delete-url="{% url 'deletelocation' id=0 %}">
+                <option value="">--Select District--</option>
+                {% for d in district %}
+                <option value="{{d.district_id}}" {% if selected_district_int and selected_district_int==d.district_id
+                  %}selected>{{d.district_name}}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Sl.no</th>
+                    <th>Location Name</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="locations-body">
+                  {% if location and location|length > 0 %}
+                  {% for d in location %}
+                  <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ d.location_name }}</td>
+                    <td>
+                      <div class="action-links">
+                        <a href="{% url 'editlocation' d.location_id %}" class="action-link edit">Edit</a>
+                        <a href="{% url 'deletelocation' d.location_id %}" class="action-link delete"
+                          onclick="return confirm('Are you sure you want to delete this location?');">Delete</a>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                  {% else %}
+                  <tr id="no-data">
+                    <td colspan="3">Please select a district to view locations</td>
+                  </tr>
+                  {% endif %}
+                </tbody>
+              </table>
+            </div>
+
+            <script>
+              document.addEventListener('DOMContentLoaded', function () {
+                const districtSelect = document.getElementById('district-select');
+                const locationsBody = document.getElementById('locations-body');
+
+                if (!districtSelect || !locationsBody) {
+                  console.error('District select or locations body not found');
+                  return;
+                }
+
+                const ajaxUrl = districtSelect.getAttribute('data-url');
+                const editBase = districtSelect.getAttribute('data-edit-url');
+                const deleteBase = districtSelect.getAttribute('data-delete-url');
+
+                // Helper to construct edit/delete URLs
+                const buildUrl = (base, id) => {
+                  return base.replace(/\/0(\/|$)/, `/${id}$1`);
+                };
+
+                districtSelect.addEventListener('change', function () {
+                  const districtId = this.value;
+                  console.log('District selected:', districtId);
+
+                  if (!districtId) {
+                    locationsBody.innerHTML = '<tr id="no-data"><td colspan="3">Please select a district to view locations</td></tr>';
+                    return;
+                  }
+
+                  // Show loading
+                  locationsBody.innerHTML = '<tr><td colspan="3" class="text-center">Loading...</td></tr>';
+
+                  const fetchUrl = `${ajaxUrl}?district=${districtId}`;
+                  console.log('Fetching:', fetchUrl);
+
+                  fetch(fetchUrl)
+                    .then(response => {
+                      if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                      }
+                      return response.json();
+                    })
+                    .then(data => {
+                      console.log('Data received:', data);
+                      if (data.locations && data.locations.length > 0) {
+                        let html = '';
+                        data.locations.forEach((loc, index) => {
+                          const editUrl = buildUrl(editBase, loc.location_id);
+                          const deleteUrl = buildUrl(deleteBase, loc.location_id);
+
+                          html += `<tr>
+                              <td>${index + 1}</td>
+                              <td>${loc.location_name}</td>
+                              <td>
+                                <div class="action-links">
+                                  <a href="${editUrl}" class="action-link edit">Edit</a>
+                                  <a href="${deleteUrl}" class="action-link delete" onclick="return confirm('Are you sure you want to delete this location?');">Delete</a>
+                                </div>
+                              </td>
+                            </tr>`;
+                        });
+                        locationsBody.innerHTML = html;
+                      } else {
+                        locationsBody.innerHTML = '<tr id="no-data"><td colspan="3">No locations found for this district</td></tr>';
+                      }
+                    })
+                    .catch(error => {
+                      console.error('Error fetching locations:', error);
+                      locationsBody.innerHTML = `<tr id="no-data"><td colspan="3">Error loading locations: ${error.message}</td></tr>`;
+                    });
+                });
+              });
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% include 'admin/footer.html' %}

@@ -1,0 +1,56 @@
+{% load static %}
+<!-- Footer Section Begin -->
+    <footer class="footer-section">
+        <div class="container">
+            <div class="footer-text">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="ft-about">
+                            <div class="logo">
+                                <a href="{% url 'guestindex' %}">
+                                    <h2 style="color: #ffffff; font-weight: 00; letter-spacing: 1px;">ResortVista</h2>
+                                </a>
+                            </div>
+                            <p>We redefine comfort and hospitality,<br /> offering experiences beyond just a stay</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright-option">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="co-text">
+                            <p>Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | ResortVista</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Footer Section End -->
+
+    <!-- Search model Begin -->
+    <div class="search-model">
+        <div class="h-100 d-flex align-items-center justify-content-center">
+            <div class="search-close-switch"><i class="icon_close"></i></div>
+            <form class="search-model-form">
+                <input type="text" id="search-input" placeholder="Search here.....">
+            </form>
+        </div>
+    </div>
+    <!-- Search model end -->
+
+    <!-- Js Plugins -->
+    <script src="{% static 'resortowner/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'resortowner/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'resortowner/js/jquery.magnific-popup.min.js' %}"></script>
+    <script src="{% static 'resortowner/js/jquery.nice-select.min.js' %}"></script>
+    <script src="{% static 'resortowner/js/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'resortowner/js/jquery.slicknav.js' %}"></script>
+    <script src="{% static 'resortowner/js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'resortowner/js/main.js' %}"></script>
+</body>
+
+</html>

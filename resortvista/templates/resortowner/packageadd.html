@@ -1,0 +1,157 @@
+{% load static %}
+{% include 'resortowner/header.html' %}
+<style>
+    .required::after {
+        content: ' *';
+        color: #dc3545;
+    }
+</style>
+<div class="package-add-page">
+    <div class="breadcrumb-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb-text">
+                        <h2>Add Package</h2>
+                        <!-- <div class="bt-option">
+                            <a href="./home.html">Home</a>
+                            <span>Rooms</span>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="resort" class="form-label required">Select Resort</label>
+                                <select class="form-select form-select-lg" id="resort" name="resort_id" required>
+                                    <option value="" disabled selected>Select a resort</option>
+                                    {% for r in resorts %}
+                                    <option value="{{ r.resort_id }}">{{ r.resort_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="package_name" class="form-label required">Package Name</label>
+                                <input type="text" class="form-control" id="package_name" name="package_name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label required">Package Includes</label>
+                                <div id="includes-list">
+                                    <div class="row g-2 align-items-end include-row">
+                                        <div class="col-md-7">
+                                            <label class="form-label">Include Name</label>
+                                            <input type="text" class="form-control" name="include_name"
+                                                placeholder="e.g., Breakfast" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Price</label>
+                                            <input type="number" class="form-control include-amount"
+                                                name="include_amount" min="0" step="0.01" value="0" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-outline-danger w-100 remove-include"
+                                                onclick="removeInclude(this)">Remove</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-outline-primary mt-2" onclick="addInclude()">Add
+                                    Include</button>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="grand_total" class="form-label">Grand Total</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Rs.</span>
+                                    <input type="number" class="form-control" id="grand_total" name="grand_total"
+                                        min="0" step="0.01" value="0" readonly>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="package_image" class="form-label">Package Image</label>
+                                <input type="file" class="form-control" id="package_image" name="package_image">
+                            </div>
+                            <div class="mb-3">
+                                <label for="duration" class="form-label required">Duration</label>
+                                <input type="text" class="form-control" id="duration" name="duration"
+                                    placeholder="e.g., 3 days, 2 nights" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="max_people" class="form-label required">Maximum People</label>
+                                <input type="number" class="form-control" id="max_people" name="max_people" min="1"
+                                    required>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <button type="submit" name="submit" class="btn btn-primary">Add Package</button>
+                                <a href="{% url 'resortview' %}" class="btn btn-outline-secondary ms-2">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include 'resortowner/footer.html' %}
+    <script>
+        function addInclude() {
+            const list = document.getElementById('includes-list');
+            const row = document.createElement('div');
+            row.className = 'row g-2 align-items-end include-row mt-2';
+            row.innerHTML = `
+            <div class="col-md-7">
+                <label class="form-label">Include Name</label>
+                <input type="text" class="form-control" name="include_name" placeholder="e.g., Dinner" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Price</label>
+                <input type="number" class="form-control include-amount" name="include_amount" min="0" step="0.01" value="0" required>
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-outline-danger w-100 remove-include" onclick="removeInclude(this)">Remove</button>
+            </div>
+        `;
+            list.appendChild(row);
+            bindAmountInputs();
+            recalcTotal();
+        }
+
+        function removeInclude(btn) {
+            const row = btn.closest('.include-row');
+            if (row) {
+                row.remove();
+                recalcTotal();
+            }
+        }
+
+        function bindAmountInputs() {
+            document.querySelectorAll('.include-amount').forEach(inp => {
+                inp.removeEventListener('input', recalcTotal);
+                inp.addEventListener('input', recalcTotal);
+            });
+        }
+
+        function recalcTotal() {
+            let includesTotal = 0;
+            document.querySelectorAll('.include-amount').forEach(inp => {
+                const val = parseFloat(inp.value || '0');
+                if (!isNaN(val)) {
+                    includesTotal += val;
+                }
+            });
+            document.getElementById('grand_total').value = includesTotal.toFixed(2);
+        }
+
+        // Initial bindings
+        document.addEventListener('DOMContentLoaded', () => {
+            bindAmountInputs();
+            recalcTotal();
+        });
+    </script>
+</div>

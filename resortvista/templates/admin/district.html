@@ -1,0 +1,30 @@
+{% load static %}
+{% include 'admin/header.html' %}
+      <div class="container-fluid">
+        {% if messages %}
+        {% for message in messages %}
+        <script>
+          alert('{{ message|escapejs }}');
+        </script>
+        {% endfor %}
+        {% endif %}
+        <div class="container-fluid">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title fw-semibold mb-4">District Registration</h5>
+              <div class="card">
+                <div class="card-body">
+                  <form action="{% url 'districtreg' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                      <label for="exampleInputPassword1" class="form-label">District Name  </label>
+                      <input type="text"  pattern="[A-Z][a-zA-Z ]*" title="First letter must be capital and only letters and spaces are allowed" class="form-control" id="exampleInputPassword1" name="district_name" placeholder="District name" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="reset" class="btn btn-light">Cancel</button>
+                  </form>
+                </div>
+              </div>       
+              </div>
+            </div>
+{% include 'admin/footer.html' %}

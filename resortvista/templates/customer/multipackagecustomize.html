@@ -1,0 +1,153 @@
+{% load static %}
+{% include 'customer/header.html' %}
+
+<style>
+	.container-custom { max-width: 1080px; margin: 0 auto; }
+	.page-title { margin: 24px 0 8px; }
+	.pkg-card { border:1px solid #e5eaf2; border-radius:12px; box-shadow:0 8px 24px rgba(16,24,40,.06); background:#fff; overflow:hidden; }
+	.pkg-header { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:#f8fafc; border-bottom:1px solid #e5eaf2; }
+	.pkg-body { padding:16px; }
+	.includes { display:grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap:10px; margin-top:8px; }
+	.include-item { display:flex; align-items:center; gap:10px; padding:10px; border:1px solid #e2e8f0; border-radius:10px; background:#ffffff; }
+	.qty-wrap { display:flex; align-items:center; gap:8px; }
+	.summary-bar { margin-top:16px; padding:14px 16px; border:1px solid #e2e8f0; border-radius:10px; background:#f1f5f9; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+	.primary-btn { display:inline-block; padding:10px 18px; background:#1e5a96; color:#fff; border:none; border-radius:6px; text-decoration:none; cursor:pointer; }
+	.primary-btn.alt { background:#eef3f9; color:#1e5a96; border:1px solid #d0dce8; }
+	.muted { color:#64748b; }
+	.mt-2 { margin-top: 8px; }
+	.mt-3 { margin-top: 12px; }
+	.mt-4 { margin-top: 16px; }
+	.grid { display:grid; gap:16px; }
+	@media (max-width: 576px) { .pkg-header { flex-direction:column; align-items:flex-start; gap:6px; } }
+</style>
+
+<section class="spad">
+	<div class="container container-custom">
+		<h2 class="page-title">Customize Selected Packages</h2>
+		{% if resort %}
+			<p class="muted">Resort: <strong>{{ resort.resort_name }}</strong></p>
+		{% endif %}
+
+		{% if not selected_packages %}
+			<div class="mt-4">
+				<p>No packages selected to customize.</p>
+				{% if resort %}
+					<a class="primary-btn alt" href="{% url 'resortsingleview' resort.resort_id %}">Back to Resort</a>
+				{% else %}
+					<a class="primary-btn alt" href="{% url 'resortview' %}">Back to Resorts</a>
+				{% endif %}
+			</div>
+		{% else %}
+		<form method="post" action="{% url 'customize_packages' resort.resort_id %}">
+			{% csrf_token %}
+			{% if date_in %}<input type="hidden" name="date_in" value="{{ date_in }}">{% endif %}
+			{% if date_out %}<input type="hidden" name="date_out" value="{{ date_out }}">{% endif %}
+
+			<div class="grid mt-3">
+				{% for item in selected_packages %}
+					{% with pkg=item.package qty=item.qty includes_list=item.includes_list %}
+					<div class="pkg-card" data-pid="{{ pkg.package_id }}">
+						<div class="pkg-header">
+							<div>
+								<div style="font-weight:700; color:#0f172a;">Package {{ forloop.counter }}: {{ pkg.package_name }}</div>
+								<div class="muted">Duration: {{ pkg.duration }}{% if pkg.max_people %} • Up to {{ pkg.max_people }} people{% endif %}</div>
+							</div>
+						</div>
+						<div class="pkg-body">
+							<input type="hidden" name="package_ids[]" value="{{ pkg.package_id }}">
+							<div class="muted">Select what to include in this package:</div>
+							<div class="includes mt-2">
+								{% for inc in includes_list %}
+									<label class="include-item">
+										<input type="checkbox" class="inc" name="includes[{{ pkg.package_id }}]" value="{{ inc.package_details_id }}" data-amount="{{ inc.amount|default:0 }}" checked>
+										<span>{{ inc.package_detail_name }}</span>
+										<span class="muted" style="margin-left:auto;">Rs.{{ inc.amount|default:0 }}</span>
+									</label>
+								{% endfor %}
+							</div>
+							<div class="mt-3" style="display:flex; align-items:center; gap:10px;">
+								<span class="muted">Estimated subtotal:</span>
+								<strong id="subtotal-{{ pkg.package_id }}">Rs.0</strong>
+								<!-- <button type="button" class="primary-btn" style="margin-left:auto;" onclick="addCustomization('{{ pkg.package_id }}')">Add Customization</button> -->
+							</div>
+							
+						</div>
+					</div>
+					{% endwith %}
+				{% endfor %}
+			</div>
+
+			<div class="summary-bar mt-4">
+				<div style="display:flex; gap:16px; align-items:center;">
+					<span>Total packages: <strong>{{ selected_packages|length }}</strong></span>
+					<span>Overall total: <strong id="overall-total">Rs.0</strong></span>
+				</div>
+				<div style="display:flex; gap:10px;">
+					<a class="primary-btn alt" href="{% url 'resortsingleview' resort.resort_id %}">Back</a>
+					<button type="submit" class="primary-btn">Proceed to Booking</button>
+				</div>
+			</div>
+		</form>
+		{% endif %}
+	</div>
+	</section>
+
+<script>
+(function(){
+	function formatCurrency(n){ n = Number(n)||0; return 'Rs.' + n.toLocaleString('en-IN'); }
+
+	function calcPackageSubtotal(card){
+		var pid = card.getAttribute('data-pid');
+		var qtyEl = card.querySelector('#qty-' + pid);
+		var qty = parseInt(qtyEl && qtyEl.value, 10); if(isNaN(qty) || qty < 1) qty = 1;
+		var sum = 0;
+		card.querySelectorAll('input.inc:checked').forEach(function(ch){
+			var amt = Number(ch.getAttribute('data-amount')) || 0; sum += amt;
+		});
+		return sum * qty;
+	}
+
+	function recalcAll(){
+		var overall = 0;
+		document.querySelectorAll('.pkg-card').forEach(function(card){
+			var pid = card.getAttribute('data-pid');
+			var sub = calcPackageSubtotal(card);
+			overall += sub;
+			var subEl = document.getElementById('subtotal-' + pid);
+			if(subEl) subEl.textContent = formatCurrency(sub);
+		});
+		var o = document.getElementById('overall-total');
+		if(o) o.textContent = formatCurrency(overall);
+	}
+
+	document.addEventListener('change', function(e){
+		if(e.target.matches('.inc') || e.target.matches('[id^="qty-"]')){
+			recalcAll();
+		}
+	});
+
+	recalcAll();
+
+	// Submit only one package's selections by disabling others
+	window.addCustomization = function(pid){
+		var form = document.querySelector('form');
+		if(!form) return;
+		// Disable all inputs not belonging to the chosen package card
+		document.querySelectorAll('.pkg-card').forEach(function(card){
+			var thisPid = card.getAttribute('data-pid');
+			if(thisPid !== String(pid)){
+				card.querySelectorAll('input').forEach(function(inp){ inp.disabled = true; });
+			}
+		});
+		// Add a hint input (optional)
+		var hidden = document.createElement('input');
+		hidden.type = 'hidden';
+		hidden.name = 'single_add_pid';
+		hidden.value = String(pid);
+		form.appendChild(hidden);
+		form.submit();
+	};
+})();
+</script>
+
+{% include 'customer/footer.html' %}

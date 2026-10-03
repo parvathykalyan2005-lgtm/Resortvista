@@ -1,0 +1,36 @@
+{% load static %}
+{% include 'admin/header.html' %}
+      <div class="container-fluid">
+        {% if messages %}
+        {% for message in messages %}
+        <script>
+          alert('{{ message|escapejs }}');
+        </script>
+        {% endfor %}
+        {% endif %}
+        <div class="container-fluid">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title fw-semibold mb-4">Location Registration</h5>
+              <div class="card">
+                <div class="card-body">
+                  <form action="{% url 'locationreg' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                      <select class="form-control" name="district_id" required>
+                        <option value="" disabled selected>Select District</option>
+                        {% for d in district %}
+                        <option value="{{ d.district_id }}">{{ d.district_name }}</option>
+                        {% endfor %}
+                      </select>
+                      <label for="locationName" class="form-label">Location Name</label>
+                      <input type="text" class="form-control" id="locationName" name="location_name" placeholder="Location name" pattern="[A-Z][a-zA-Z ]*" title="First letter must be capital and only letters and spaces are allowed" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <a href="{% url 'locationview' %}" class="btn btn-light">Cancel</a>
+                  </form>
+                </div>
+              </div>
+              </div>
+            </div>
+{% include 'admin/footer.html' %}

@@ -1,0 +1,264 @@
+{% load static %}
+{% include 'resortowner/header.html' %}
+<style>
+    .vr-filter-row {
+        justify-content: flex-end;
+    }
+
+    .vr-filter-col {
+        margin-left: auto;
+    }
+
+    .vr-filter-card {
+        background: #fff;
+        border: 1px solid #ececec;
+        border-radius: 10px;
+        padding: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    .vr-filter-group .input-group-text {
+        background: #f8f9fa;
+        border-color: #ddd;
+        font-weight: 600;
+    }
+
+    .vr-filter-group .form-select {
+        border-color: #ddd;
+        min-height: 44px;
+    }
+
+    .vr-card {
+        margin-bottom: 28px;
+    }
+
+    .vr-room-item {
+        display: flex;
+        flex-direction: row;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        height: 100%;
+    }
+
+    .vr-room-item .ri-text {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        padding: 24px;
+    }
+
+    .vr-room-item .ri-text table {
+        margin-bottom: 12px;
+    }
+
+    .vr-room-item:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .vr-room-item img {
+        width: 320px;
+        min-width: 320px;
+        height: 100%;
+        min-height: 260px;
+        object-fit: cover;
+    }
+
+    .vr-category {
+        margin: 0 0 6px 0;
+        color: #6b7280;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .vr-action {
+        border-radius: 8px;
+        padding: 10px 16px;
+        margin: 0;
+    }
+
+    .vr-actions {
+        margin-top: auto;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .vr-edit-btn {
+        background: #eb905a;
+    }
+
+    .vr-edit-btn:hover {
+        background: #d97f49;
+    }
+
+    .vr-edit-btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(235, 144, 90, 0.25);
+    }
+
+    .vr-delete-btn {
+        background: #6c757d;
+    }
+
+    .vr-delete-btn:hover {
+        background: #5a6268;
+    }
+
+    @media (max-width: 767px) {
+        .vr-filter-card {
+            margin-top: 10px;
+        }
+
+        .vr-filter-col {
+            margin-left: 0;
+        }
+
+        .vr-actions {
+            width: 100%;
+        }
+
+        .vr-action {
+            flex: 1;
+            text-align: center;
+        }
+
+        .vr-room-item {
+            flex-direction: column;
+        }
+
+        .vr-room-item img {
+            width: 100%;
+            min-width: 100%;
+            min-height: 220px;
+        }
+
+        .vr-room-item .ri-text {
+            padding: 18px;
+        }
+    }
+</style>
+<form id="csrf-token-form" style="display:none;">{% csrf_token %}</form>
+<div class="breadcrumb-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb-text">
+                    <h2>View Resorts</h2>
+                    <!-- <div class="bt-option">
+                            <a href="./home.html">Home</a>
+                            <span>Rooms</span>
+                        </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container my-3">
+    <div class="row align-items-center vr-filter-row">
+        <div class="col-lg-8">
+            <!-- space for additional controls or info -->
+        </div>
+        <div class="col-lg-4 col-md-7 vr-filter-col">
+            <form method="get" action="{% url 'viewresort' %}" class="input-group vr-filter-group vr-filter-card">
+                <span class="input-group-text">Category</span>
+                <select id="categorySelect" name="category_id" class="form-select" onchange="this.form.submit()">
+                    <option value="">All Categories</option>
+                    {% for c in categories %}
+                    <option value="{{ c.category_id }}" {% if selected_category_id == c.category_id %}selected{% endif %}>
+                        {{ c.category_name }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+    </div>
+</div>
+<section class="rooms-section spad">
+    <div class="container">
+        <div class="row">
+            {% for r in resorts %}
+            <div class="col-lg-12 vr-card" id="resort-card-{{ r.resort.resort_id }}">
+                <div class="room-item vr-room-item">
+                    {% if r.resort.resort_image %}
+                    <img src="{{ r.resort.resort_image.url }}" alt="">
+                    {% endif %}
+                    <div class="ri-text">
+                        <h4>{{ r.resort.resort_name }}</h4>
+                        {% if r.category_name %}<p class="vr-category">{{ r.category_name }}
+                        </p>{% endif %}
+                        <h3>Rs.{{ r.resort.amount }}<span>/Pernight</span></h3>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td class="r-o">Location:</td>
+                                    <td>{{ r.location_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="r-o">Description:</td>
+                                    <td>{{ r.resort.description }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="r-o">Address:</td>
+                                    <td>{{ r.resort.resort_address }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="r-o">Phone:</td>
+                                    <td>{{ r.resort.resort_phone }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="vr-actions">
+                            <a href="{% url 'editresort' r.resort.resort_id %}" class="primary-btn vr-action vr-edit-btn">Edit</a>
+                            <a href="#" class="primary-btn delete-resort-btn vr-action vr-delete-btn" data-id="{{ r.resort.resort_id }}"
+                                data-url="{% url 'deleteresort' r.resort.resort_id %}">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<script>
+    // Get CSRF token from cookie
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+    const csrftoken = getCookie('csrftoken') || document.querySelector('#csrf-token-form [name=csrfmiddlewaretoken]')?.value;
+
+    document.addEventListener('click', async function (e) {
+        const btn = e.target.closest('.delete-resort-btn');
+        if (!btn) return;
+        e.preventDefault();
+
+        const resortId = btn.getAttribute('data-id');
+        const url = btn.getAttribute('data-url');
+        if (!resortId || !url) return;
+
+        if (!confirm('Are you sure you want to delete this resort?')) return;
+
+        try {
+            const resp = await fetch(url, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrftoken },
+            });
+            const data = await resp.json();
+            if (resp.ok && data.success) {
+                const card = document.getElementById(`resort-card-${resortId}`);
+                if (card) card.remove();
+            } else {
+                alert(data.error || 'Failed to delete resort');
+            }
+        } catch (err) {
+            alert('Network error while deleting resort');
+        }
+    });
+</script>
+{% include 'resortowner/footer.html' %}

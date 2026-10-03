@@ -1,0 +1,359 @@
+{% load static %}
+{% include 'admin/header.html' %}
+<style>
+  .ownerverify-page {
+    --ov-primary: #1e5a96;
+    --ov-primary-dark: #1a4d7a;
+    --ov-primary-light: #2874a6;
+    --ov-danger: #c0392b;
+    --ov-danger-dark: #a93226;
+    --ov-success: #1d9b5e;
+    --ov-text-main: #1a2332;
+    --ov-text-muted: #6f8196;
+    --ov-border: #dbe4ee;
+    --ov-surface: #ffffff;
+    --ov-bg: #f6f8fb;
+    padding: 1.35rem;
+  }
+
+  .ownerverify-page .verification-card {
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(160deg, #ffffff 0%, #f9fbfd 100%);
+    box-shadow: 0 12px 28px rgba(42, 53, 71, 0.08);
+    overflow: hidden;
+  }
+
+  .ownerverify-page .verification-card .card-body {
+    padding: 1.5rem 1.5rem 1.25rem !important;
+  }
+
+  .ownerverify-page .title-wrap {
+    margin-bottom: 1.25rem;
+  }
+
+  .ownerverify-page .card-title {
+    font-size: 1.45rem !important;
+    font-weight: 700 !important;
+    color: var(--ov-text-main) !important;
+    letter-spacing: 0.2px;
+    margin: 0;
+  }
+
+  .ownerverify-page .page-subtitle {
+    color: var(--ov-text-muted);
+    font-size: 0.92rem;
+    margin-top: 0.45rem;
+  }
+
+  .ownerverify-page .message-stack {
+    margin-bottom: 1rem;
+  }
+
+  .ownerverify-page .message-stack .alert {
+    border: 1px solid transparent;
+    border-left-width: 4px;
+    border-radius: 10px;
+    font-weight: 500;
+    padding: 0.75rem 0.95rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .ownerverify-page .message-stack .alert-success {
+    background: #e9f9f1;
+    color: #0f5c39;
+    border-color: #bcefd4;
+  }
+
+  .ownerverify-page .message-stack .alert-error,
+  .ownerverify-page .message-stack .alert-danger {
+    background: #feefee;
+    color: #7a1b15;
+    border-color: #f8cdc8;
+  }
+
+  .ownerverify-page .message-stack .alert-info {
+    background: #eef5ff;
+    color: #184b7a;
+    border-color: #d3e4ff;
+  }
+
+  .ownerverify-page .table-shell {
+    border: 1px solid var(--ov-border);
+    border-radius: 12px;
+    background: var(--ov-surface);
+  }
+
+  .ownerverify-page .table {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+  }
+
+  .ownerverify-page .table thead {
+    background: linear-gradient(135deg, #f3f7fc 0%, #ecf2fb 100%);
+  }
+
+  .ownerverify-page .table thead th {
+    border-bottom: 1px solid var(--ov-border);
+    color: var(--ov-primary);
+    font-size: 0.79rem;
+    text-transform: uppercase;
+    letter-spacing: 0.65px;
+    font-weight: 700;
+    padding: 0.95rem 0.75rem;
+    white-space: nowrap;
+  }
+
+  .ownerverify-page .table tbody tr {
+    border-bottom: 1px solid #edf2f7;
+    transition: background-color 0.2s ease;
+  }
+
+  .ownerverify-page .table tbody tr:hover {
+    background: var(--ov-bg);
+  }
+
+  .ownerverify-page .table tbody td {
+    padding: 0.95rem 0.75rem;
+    vertical-align: middle;
+    color: #34465a;
+    white-space: normal;
+  }
+
+  .ownerverify-page .id-cell {
+    color: #7a8ea6;
+    font-weight: 600;
+    width: 72px;
+  }
+
+  .ownerverify-page .owner-name {
+    color: #1b2a3c;
+    font-weight: 700;
+  }
+
+  .ownerverify-page .owner-email,
+  .ownerverify-page .owner-phone {
+    color: #3f5267;
+    font-weight: 500;
+    word-break: break-word;
+  }
+
+  .ownerverify-page .license-link {
+    color: var(--ov-primary);
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: 1px dashed rgba(30, 90, 150, 0.35);
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .ownerverify-page .license-link:hover {
+    color: var(--ov-primary-dark);
+    border-color: rgba(26, 77, 122, 0.65);
+  }
+
+  .ownerverify-page .status-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+    white-space: nowrap;
+  }
+
+  .ownerverify-page .status-chip.accepted {
+    background: #e9f9f1;
+    color: #0f6d42;
+    border-color: #bdeed5;
+  }
+
+  .ownerverify-page .action-cell {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .ownerverify-page .action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.45px;
+    text-transform: uppercase;
+    color: #ffffff;
+    text-decoration: none;
+    transition: all 0.22s ease;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .ownerverify-page .action-btn svg {
+    width: 13px;
+    height: 13px;
+    fill: currentColor;
+  }
+
+  .ownerverify-page .btn-approve {
+    background: linear-gradient(135deg, var(--ov-primary) 0%, var(--ov-primary-light) 100%);
+    box-shadow: 0 6px 14px rgba(30, 90, 150, 0.18);
+  }
+
+  .ownerverify-page .btn-approve:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, var(--ov-primary-dark) 0%, var(--ov-primary) 100%);
+    box-shadow: 0 9px 18px rgba(30, 90, 150, 0.25);
+  }
+
+  .ownerverify-page .btn-reject {
+    background: linear-gradient(135deg, var(--ov-danger) 0%, #db4a3b 100%);
+    box-shadow: 0 6px 14px rgba(192, 57, 43, 0.2);
+  }
+
+  .ownerverify-page .btn-reject:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, var(--ov-danger-dark) 0%, var(--ov-danger) 100%);
+    box-shadow: 0 9px 18px rgba(169, 50, 38, 0.26);
+  }
+
+  .ownerverify-page .empty-state {
+    text-align: center;
+    color: #7a8da3;
+    font-style: italic;
+    padding: 1.8rem 1rem !important;
+    font-weight: 500;
+  }
+
+  @media (max-width: 991px) {
+    .ownerverify-page {
+      padding: 1rem;
+    }
+
+    .ownerverify-page .verification-card .card-body {
+      padding: 1.15rem !important;
+    }
+
+    .ownerverify-page .table {
+      min-width: 860px;
+    }
+  }
+
+  @media (max-width: 575px) {
+    .ownerverify-page .card-title {
+      font-size: 1.25rem !important;
+    }
+
+    .ownerverify-page .action-cell {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .ownerverify-page .action-btn,
+    .ownerverify-page .status-chip {
+      justify-content: center;
+      width: 100%;
+    }
+  }
+</style>
+<div class="container-fluid ownerverify-page">
+  <div class="card verification-card">
+    <div class="card-body">
+      <div class="title-wrap">
+        <h5 class="card-title fw-semibold mb-0">Resort Owner Verification</h5>
+        <p class="page-subtitle mb-0">Review owner registrations and approve only verified accounts.</p>
+      </div>
+
+      {% if messages %}
+      <div class="message-stack">
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}" role="alert">
+          {{ message }}
+        </div>
+        {% endfor %}
+      </div>
+      <script>
+        (function () {
+          var successBlocks = document.querySelectorAll('.message-stack .alert-success');
+          if (!successBlocks.length) {
+            return;
+          }
+          successBlocks.forEach(function (el) {
+            var text = (el.textContent || el.innerText || '').trim();
+            if (text) {
+              alert(text);
+            }
+          });
+        })();
+      </script>
+      {% endif %}
+
+      <div class="table-responsive table-shell">
+        <table class="table align-middle text-nowrap mb-0">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Contact No</th>
+              <th>License</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in resortowner %}
+            <tr>
+              <td class="id-cell">{{ forloop.counter }}</td>
+              <td>
+                <div class="owner-name">{{ r.owner_name }}</div>
+              </td>
+              <td>
+                <div class="owner-email">{{ r.owner_email }}</div>
+              </td>
+              <td>
+                <div class="owner-phone">{{ r.owner_phone }}</div>
+              </td>
+              <td>
+                {% if r.licence_image %}
+                <a href="{{ r.licence_image.url }}" class="license-link" target="_blank" rel="noopener noreferrer">View License</a>
+                {% else %}
+                <span class="text-muted">No License Uploaded</span>
+                {% endif %}
+              </td>
+              <td>
+                <div class="action-cell">
+                  {% if r.login_id and r.login_id.status == 'Accepted' %}
+                  <span class="status-chip accepted">Accepted</span>
+                  {% else %}
+                  <a href="{% url 'acceptowner' id=r.owner_id %}" class="action-btn btn-approve" title="Accept owner">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/><path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                    Accept
+                  </a>
+                  {% endif %}
+                  <a href="{% url 'deleteowner' id=r.owner_id %}" class="action-btn btn-reject" onclick="return confirm('Are you sure you want to reject this owner?');" title="Reject owner">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-9l-1 1H5v2h14V4z"/></svg>
+                    Reject
+                  </a>
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="6" class="empty-state">No resort owner registrations found.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% include 'admin/footer.html' %}
